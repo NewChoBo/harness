@@ -1,10 +1,6 @@
 #!/usr/bin/env node
 
-import {
-  HarnessError,
-  resolveCatalogResources,
-  validateCatalogFile,
-} from './index.js';
+import { HarnessError, resolveCatalogResources, validateCatalogFile } from './index.js';
 
 interface ParsedArgs {
   rootDir: string;
@@ -85,7 +81,9 @@ function printHelp(): void {
   process.stdout.write('  harness validate [--root <dir>] [--catalog <file>]\n');
   process.stdout.write('  harness resolve [resource-id ...] [--root <dir>] [--catalog <file>]\n');
   process.stdout.write('\n');
-  process.stdout.write('This foundation validates and resolves current Harness catalog resources only.\n');
+  process.stdout.write(
+    'This foundation validates and resolves current Harness catalog resources only.\n',
+  );
 }
 
 main().catch((error: unknown) => {

@@ -5,6 +5,10 @@
   "description": "Core Harness catalog resolver and validation engine.",
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NewChoBo/harness.git"
+  },
   "engines": {
     "node": ">=20"
   },

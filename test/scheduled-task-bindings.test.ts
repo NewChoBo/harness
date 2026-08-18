@@ -60,6 +60,11 @@ describe('repository-owned Scheduled Task bindings', () => {
   });
 
   it('does not reintroduce the superseded private-control path', () => {
-    expect(binding).not.toContain('.newchobo/automation/chatgpt-scheduled-task-bindings.md');
+    const removedTaskBindingPath = [
+      '.newchobo',
+      'automation',
+      'chatgpt-scheduled-task-bindings.md',
+    ].join('/');
+    expect(binding).not.toContain(removedTaskBindingPath);
   });
 });

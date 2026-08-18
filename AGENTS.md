@@ -1,224 +1,170 @@
 # Agent Guide — NewChoBo Harness
 
-This repository defines reusable automation methodology, governance semantics, and control-plane contracts for GPT/Codex-style repository agents.
+NewChoBo Harness is a public, provider-neutral control plane for durable agent roles, authority, workflows, evidence, review, adoption, automation, overlays, and handoffs.
 
-## Mission
+## Public repository boundary — hard rule
 
-Build a small, versioned Harness that lets consumer repositories reuse agent roles, protocols, checklists, routing, evidence, approval, state, overlays, and handoff conventions without copying large Scheduled Task prompts.
+This repository is public. Assume every file, commit message/author field, branch/tag name, Issue, Pull Request, review/comment, Actions log/artifact, release, registry entry, example, fixture, and generated output can be read and permanently copied by anyone.
 
-The Harness owns shared methodology/governance/resource semantics. Consumers own product/domain policy.
+If information is not clearly safe for public disclosure, do not write it here. `UNKNOWN` disclosure safety is fail-closed.
 
-## North Star bootstrap
+Never persist secrets, credentials, personal/sensitive data, private consumer/customer/project identities, private repository/Issue/PR/branch/task coordinates, private operational evidence, raw private prompts/transcripts, unpublished private-domain material, or confidential denylists. Private evidence may inform public development only after minimization/generalization into a public-safe, consumer-anonymous finding.
 
-Before material roadmap, architecture, workflow-topology, provider/runtime, or governance decisions, restore [`docs/north-star.md`](docs/north-star.md).
+The canonical rule is [`protocol/public-information-boundary`](standard/protocols/public-information-boundary.md).
 
-The North Star is authoritative for **why the product exists and the desired end state**. The Standard remains authoritative for shared operational role/protocol/checklist semantics. Lower-level roadmap, workflow, issue, or implementation choices must not silently redefine the North Star.
+## Mission and North Star
 
-For routine implementation already governed by a clear accepted WorkItem, do not reread unrelated strategic material merely to create process overhead; preserve the North Star through the routed goal and governing resources.
+Build a small, versioned Harness that lets compatible agents, runtimes, and projects reuse governance and execution semantics without copying large prompts or binding one provider/runtime.
+
+Before material product direction, architecture, workflow topology, provider/runtime, automation, packaging, or governance decisions, restore [`docs/north-star.md`](docs/north-star.md). The North Star owns why and desired end state; the Standard owns shared operational semantics; the current repository/package source owns executable realization.
+
+Routine work with a clear accepted WorkItem loads only the governing resources required for that work.
 
 ## Canonical model
 
-The architectural source of truth is the **Semantic Resource Model**, not Markdown, YAML, JSON, TypeScript, Python, or another serialization/runtime.
+The architectural source is the Semantic Resource Model, not one serialization language. `standard/catalog.yaml` owns resource identity/path/provenance metadata; each referenced Standard resource owns its behavior. ADRs preserve rationale/history/provenance for mapped semantics and must not become competing policy copies.
 
-Current v0.x text is a low-cost bootstrap/projection. Stable machine-governed resources may move to structured canonical data when structure materially improves reliability or interoperability. Narrative text remains appropriate for rationale, examples, research, long guidance, migration notes, and human-readable projections.
+Provider/task prompts, README projections, examples, generated files, and runtime state are not automatically canonical.
 
-When multiple representations describe one resource, identify exactly one authoritative representation and its derivation/provenance relationship. Do not create competing canonical sources.
+## Decision Safety
 
-## Decision Safety Gate
+Conversational input is not automatically mutation authority. Classify material input as equivalent to:
 
-Conversational input is not automatically authorization.
+- `DIRECTIVE`
+- `APPROVAL`
+- `PROPOSAL`
+- `QUESTION`
+- `BRAINSTORM`
+- `AMBIGUOUS`
 
-Before a material mutation, distinguish semantics equivalent to:
+Only explicit directives/approvals or a current standing delegation authorize mutation. Proposals/questions/brainstorming are analyze-only by default. Authority, autonomy, capability, and preference remain separate.
 
-- `DIRECTIVE` — explicit instruction to execute/change/apply;
-- `APPROVAL` — explicit approval of a concrete candidate/decision;
-- `PROPOSAL` — suggestion for evaluation;
-- `QUESTION` — request for analysis/comparison/recommendation;
-- `BRAINSTORM` — exploratory idea generation;
-- `AMBIGUOUS` — material intent cannot be resolved safely.
+Before a material change, assess goal/scope, benefits, drawbacks, regressions, alternatives/no-change, reversibility, compatibility, interoperability, complexity, maintenance, validation/falsifier, privacy/security, release/cost, and authority.
 
-Only explicit directives/approvals or a standing delegated mandate authorize material mutation. Proposal/question/brainstorm/ambiguous input is analyze-only by default.
+## Core roles and organization
 
-Do not infer approval from tentative language, enthusiasm, rhetorical questions, or implementation feasibility.
+Keep these responsibility axes distinct even when one runtime hosts several logical roles:
 
-## Pre-change consequence analysis
+- **Principal / User** — goal, values, reserved decisions, and explicitly delegated standing authority.
+- **Supervisor** — control state, ownership/dependencies, routing, branch/PR/release/failure reconciliation, recursive improvement, and upward escalation.
+- **Worker / Implementer** — one authorized decision-ready implementation slice ending at a frozen candidate.
+- **Independent Reviewer** — producer-distinct final candidate review.
+- **Governor / Adoption Authority** — adopts/rejects/narrows or requests revision; may integrate exact reviewed candidates.
+- **Researcher / Specialist** — bounded evidence or domain advice; does not automatically become owner/reviewer/adopter.
 
-Before implementing a material authorized change, perform proportionate analysis of:
+Organization/reporting, WorkItem ownership, authority, workflow, runtime topology, and autonomy are independent. Reporting to a role does not grant mutation authority.
 
-- goal and approved scope;
-- benefits;
-- drawbacks/costs;
-- side effects, regressions, and failure modes;
-- alternatives, including no-change/defer when meaningful;
-- reversibility/rollback;
-- compatibility and consumer impact;
-- interoperability/open-source impact;
-- complexity and maintenance cost;
-- validation/falsifier/evidence;
-- authority, security, privacy, destructive, release, and resource/cost impact.
-
-Explicit wording does not grant authority beyond the current role. Reserved root/high-risk changes still route upward.
-
-## Core role separation
-
-Keep these responsibilities distinct even if a consumer renames roles:
-
-- **Governor / Higher Authority** — adopts/rejects material changes after evidence and PRE_ADOPTION_REVIEW; owns delegated authority boundaries.
-- **Supervisor** — control state, ownership/dependencies, routing, evidence, recursive improvement, escalation.
-- **Worker / Implementer** — implements one authorized decision-ready work item and stops at `CANDIDATE_READY`.
-- **Independent Reviewer** — independently reviews the frozen final candidate before adoption.
-- **Researcher** — reduces uncertainty with scoped evidence, alternatives, and counterexamples.
-
-For material changes, **Producer/Worker and Independent Reviewer must be distinct identities/owners**. A producer may not issue the independent-review verdict for its own candidate.
-
-Supervisor is control/governance-first, not a routine broad source reviewer.
-
-## Material change lifecycle
+## Material lifecycle
 
 ```text
-input / evidence
--> intent classification
--> analyze-only OR authorized change
--> pre-change consequence analysis
--> Worker implementation
--> Worker self-check
--> CANDIDATE_READY (frozen effective candidate)
--> PRE_ADOPTION_REVIEW
--> REVIEW_PASSED
--> Governor / higher-authority adoption decision
--> integration
+input/evidence
+-> intent and consequence analysis
+-> authorized WorkItem
+-> Worker implementation on topic branch
+-> applicable validation + self-check
+-> frozen CANDIDATE_READY
+-> producer-distinct PRE_ADOPTION_REVIEW
+-> REVIEW_PASSED | CHANGES_REQUIRED | REVIEW_BLOCKED
+-> Governor/adoption decision
+-> exact integration to main
+-> main/owner/branch cleanup verification
 -> post-adoption effect validation
 ```
 
-`IMPLEMENTATION_COMPLETE`, `CANDIDATE_READY`, and `REVIEW_PASSED` are not `ADOPTED`.
+`IMPLEMENTATION_COMPLETE`, `CANDIDATE_READY`, `REVIEW_PASSED`, `MERGED`, `RELEASED`, and `EFFECTIVE` are different facts.
 
-## Worker Self-Check
+Any material base/head/profile/overlay/schema change after review invalidates the prior PASS.
 
-Before reporting `CANDIDATE_READY`, verify:
+## Repository automation and branch lifecycle
 
-- goal/acceptance and approved scope;
-- freshness of source/base/candidate/dependencies;
-- ownership and no duplicate/foreign work overwritten;
-- applicable validation actually ran; skipped/unavailable is not PASS;
-- exact candidate identity and evidence;
-- canonicality/provenance consistency;
-- material side-effect/regression awareness;
-- rollback/falsifier where material;
-- residual/systemic follow-up has been checked without expanding scope;
-- durable handoff for independent review.
+The canonical physical task bindings are [`.newchobo/harness/scheduled-task-bindings.md`](.newchobo/harness/scheduled-task-bindings.md). The task manager stores only a thin repository/ref/binding pointer.
 
-## Effective candidate identity
+Apply [`protocol/automation-operation`](standard/protocols/automation-operation.md):
 
-Review the effective candidate, not merely one commit when other layers affect semantics.
+- missing/unreadable binding → `CONTROL_SOURCE_MISSING`; never recreate it from memory, archives, consumers, or stale task text;
+- Worker, Supervisor, and Independent Reviewer never write directly to `main`;
+- one logical work item owns at most one active short-lived topic branch/PR;
+- restore/continue a valid interrupted branch before opening a duplicate;
+- merge only the exact reviewed PR candidate with expected-head protection;
+- verify resulting `main`, owner status, and branch deletion;
+- delete superseded, empty, merged, or experiment-only branches only after verifying no required unique delta remains;
+- Scheduled Tasks do not change their own population/cadence;
+- `NO_ACTION` is valid and creates no reminder-only GitHub noise.
 
-When relevant include:
+Direct-main add/delete commits are not a reconciliation mechanism.
 
-- candidate/head SHA or immutable artifact identity;
-- base/control SHA;
-- Harness version/ref;
-- profile identity/version;
-- relevant project/task overlay identities;
-- schema/resource versions affecting semantics.
+## Failure, recovery, and reporting
 
-A material change to these after review invalidates the PASS.
+`SELF_RECOVERY_ALLOWED != SILENT_FAILURE_ALLOWED`.
 
-## PRE_ADOPTION_REVIEW
+A material child failure is reported to the accountable higher owner even when bounded self-recovery is attempted. Persist only decision-relevant evidence: work/target/stage, impact, recovery class, current state, blocker fingerprint when useful, and next owner—never private chain-of-thought.
 
-Every material candidate receives a fresh independent review **after implementation is complete and the effective candidate is frozen**.
+Repeated non-converging failure triggers decomposition, dependency/capability/authority/state-model analysis, alternate routing, rollback, or reserved-decision escalation rather than infinite replay. Unrelated authorized work continues unless the failure is a real prerequisite/safety stop.
 
-The Reviewer re-evaluates the finished candidate against the original goal and authorized scope, including:
+Only unresolved human/reserved actions reach the Principal. The final report accumulates deduplicated still-pending decisions until explicitly resolved, superseded, or no longer required.
 
-- actual diff/resources/effective configuration;
-- validation/evidence;
-- newly visible drawbacks, side effects, regressions, complexity, maintenance cost;
-- whether a simpler/better alternative is now apparent;
-- authority and approval boundaries;
-- producer/reviewer independence;
-- consumer/open-source interoperability;
-- canonical representation/provenance and duplicate-source risk;
-- declarative-resource / anti-DSL boundary;
-- rollback/falsifier;
-- every applicable prior review finding.
+## Release and tag authority
 
-`REVIEW_PASSED` means only eligible for adoption consideration.
+Tag push is the single automatic release entrypoint. `.github/workflows/release.yml` validates, publishes all public packages idempotently, and creates/verifies the GitHub Release.
 
-## Governor Approval
+A top-level management/Governor agent may push a SemVer release tag only under explicit standing tag authority and after all gates in `protocol/automation-operation` pass: exact current main, merged reviewed source, green required checks, coherent publishable versions, public-safe metadata/package contents, no conflicting tag/release/registry state, and clear remediation ownership.
 
-Governor may integrate a material candidate only after verifying a fresh PRE_ADOPTION_REVIEW PASS for the current effective candidate, no unresolved material blocker, sufficient evidence/validation, authority to adopt, and acceptable rollback/consequences.
+Ordinary Worker/Supervisor/Reviewer roles cannot tag or publish. A tag never authorizes source edits or bypasses release approval.
 
-Any material candidate drift after PASS requires re-review.
+## Public packages and current workspace
 
-## Recursive self-evolution
+Canonical package manager: pnpm (`pnpm-lock.yaml`). Do not add a competing npm/yarn lockfile.
 
-Harness may redesign roles, protocols, checklists, topology, governance, state/evidence models, resource schemas, documentation, and tooling through the normal lifecycle.
+Publishable workspace packages:
 
-A role may propose changes to itself, but a material change to that role's own responsibilities or authority requires final adoption **above the role being changed**. A Governor must not approve its own material role/authority change unless an explicit higher Governor tier exists.
+- `@newchobo/harness`
+- `@newchobo/harness-core`
+- `@newchobo/harness-workflow-coding`
+- `@newchobo/harness-workflow-novel`
+- `@newchobo/harness-workflow-research`
 
-Any authority expansion requires approval above the authority being expanded.
+Useful commands:
 
-External/public publication or visibility changes escalate only when that authority has not already been explicitly delegated. Root-constitution changes, material security/privacy boundary changes, destructive/irreversible operations, unbounded commitments, and expansion beyond delegated scope remain higher-gated.
+```bash
+pnpm install --frozen-lockfile
+pnpm validate
+pnpm validate:strict
+pnpm --filter @newchobo/harness-core validate
+```
 
-## Declarative resource boundary / anti-DSL
+Unavailable/skipped/cancelled checks are not PASS. Completion text is not proof; inspect actual commits, diffs, checks, artifacts, release/package state, and branch cleanup.
 
-Structured Harness resources are declarative data contracts, not a hidden programming language.
-
-Do not add arbitrary expressions/eval, user-defined loops/control flow, embedded scripts, executable templates/macros, dynamic code loading, implicit network execution, callbacks, or effectively Turing-complete semantics to core YAML/JSON/resource contracts.
-
-Bounded declarative composition is allowed: stable references, enums, explicit precedence, finite selectors, schema constraints, and `extend` / `replace` / `disable` / `add`.
-
-Complex computation, policy evaluation, reconciliation, retries, iteration, search, or side effects belong in controller/runtime/policy-adapter code behind explicit versioned interfaces.
-
-A future policy/expression language must be an explicit separately governed adapter/resource type, not accidental syntax growth.
-
-## Install + overlay model
+## Public and private overlays
 
 ```text
-installed shared Agent Harness base
-+ optional shared profile
-+ repository/project overlay
-+ task/lane overlay
+public Harness base
++ optional public workflow/profile
++ authorized private reusable overlay
++ consumer repository overlay
++ project/task/lane overlay within delegated scope
 = effective workflow
 ```
 
-Installed upstream resources are upstream-owned/read-only from the consumer perspective. Project/task changes belong in overlays. Existing project-native layouts may be retained and mapped through a small entrypoint.
+Public workflow packages remain general. Sensitive reusable methodology lives in an authorized private overlay source. Consumer canon, product policy, manuscript/data, local prompts, exact review state, and private evidence remain consumer-owned. Later precedence never widens authority or overrides non-overridable constraints.
 
-Conceptual precedence:
+Public source must never name or depend on a particular private overlay repository. Consumers bind private sources locally by exact reviewed ref and fail closed when a required private source is unavailable.
 
-```text
-upstream base
--> selected profile
--> project overlay
--> task/lane overlay
-```
+## Independent review and adoption
 
-Runtime prompt text is not automatically a higher canonical policy layer.
+Worker self-check is first-party validation and cannot satisfy Independent Review. The Reviewer inspects the final effective candidate, actual validation, prior findings, public metadata surfaces, branch lifecycle, release impact, simpler alternatives, rollback, authority, and private/public boundaries.
 
-## Open-source boundary
+`REVIEW_PASSED` means only eligible for adoption. Governor integrates only an exact current reviewed candidate and verifies main/cleanup afterward.
 
-Shared/public Harness material must remain organization- and consumer-neutral. Do not publish private consumer names, paths, identifiers, credentials, or evidence in shared examples.
+## Recursive self-evolution
 
-The core must not require one repository provider, branch naming scheme, issue label set, scheduler/runtime, programming language, directory layout, or organization-specific authority name.
+Harness may improve its roles, protocols, profiles, checklists, schemas, packages, adapters, topology, documentation, automation, and release process through the normal lifecycle.
 
-Customization and conformance are separate: a project may replace defaults and still use Agent Harness, but must not claim conformance to a profile whose required invariant it replaced.
+A role may propose changes to itself, but material changes to that role's responsibility/authority require adoption above the changed role. Authority expansion always requires a higher authority. Repeated failure, stale/duplicated policy, overdesign, branch/PR accumulation, validation gaps, prompt drift, release errors, or a materially simpler alternative are improvement signals—not permission to expand scope without review.
 
-## Structured future
+After adoption, measure effect. Narrow, remove, revert, or supersede ineffective/regressive machinery instead of accumulating rules indefinitely.
 
-Structured resources, schemas, controllers, APIs, and typed models are implementation/representation layers of the same Semantic Resource Model. They must not create a parallel policy model.
+## Declarative resource boundary
 
-v0.x remains GPT-usable without mandatory Harness-specific runtime tooling. Introduce machine enforcement proportionally to observed failure modes.
+Structured Harness resources are declarative contracts, not a hidden programming language. Do not add arbitrary eval, user-defined loops/control flow, embedded scripts, executable templates/macros, dynamic code loading, implicit network execution, callbacks, or accidental Turing-complete semantics.
 
-## Effect validation
-
-Adoption is not proof of design quality. Track material adopted changes as:
-
-- `PENDING_EFFECT_VALIDATION`
-- `EFFECTIVE`
-- `INEFFECTIVE`
-- `REGRESSIVE`
-- `INCONCLUSIVE`
-
-Narrow, revert, or supersede ineffective/regressive machinery instead of accumulating rules indefinitely.
-
-## Validation principle
-
-Completion reports are not proof. Do not claim review, adoption, release, migration, validation, or observed effect unless verified from actual repository/tool state.
+Stable references, enums, explicit precedence, finite selectors, schema constraints, and bounded `extend | replace | disable | add` composition are allowed. Complex computation, retries, reconciliation, search, and side effects belong in runtime/controller/adapter code behind explicit interfaces.

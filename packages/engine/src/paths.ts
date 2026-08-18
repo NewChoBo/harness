@@ -19,7 +19,10 @@ export function assertInsideRoot(rootDir: string, candidate: string): string {
   return absolute;
 }
 
-export async function assertRealPathInsideRoot(rootDir: string, candidate: string): Promise<string> {
+export async function assertRealPathInsideRoot(
+  rootDir: string,
+  candidate: string,
+): Promise<string> {
   const lexical = assertInsideRoot(rootDir, candidate);
   const canonicalRoot = await canonicalizeRoot(rootDir);
 
@@ -148,9 +151,5 @@ function isMissingPathError(error: unknown): boolean {
 }
 
 function escapesRoot(relativePath: string): boolean {
-  return (
-    relativePath === '..' ||
-    relativePath.startsWith(`..${sep}`) ||
-    isAbsolute(relativePath)
-  );
+  return relativePath === '..' || relativePath.startsWith(`..${sep}`) || isAbsolute(relativePath);
 }

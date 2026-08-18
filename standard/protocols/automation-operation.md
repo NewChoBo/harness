@@ -2,7 +2,7 @@
 
 Resource ID: `protocol/automation-operation`
 
-This protocol defines the reusable control contract for recurring or scheduled Harness execution. Scheduler-specific cadence and physical task population remain runtime configuration, not canonical Harness policy.
+This protocol defines safe recurring or scheduled Harness execution over repository work, review, failures, branch lifecycle, and releases. Scheduler-specific cadence and physical task population remain runtime configuration, not canonical Harness policy. This protocol does not expand role authority.
 
 ## Repository-owned bootstrap
 
@@ -23,9 +23,15 @@ At run start:
 5. reconcile existing ownership, candidate/branch/review/dependency/blocker state before creating new work;
 6. verify authority and public-safety constraints before mutation.
 
-If the configured binding or required canonical source is missing, unreadable, moved without a compatible migration, or cannot be verified, terminate as `CONTROL_SOURCE_MISSING` or `CONTROL_SOURCE_UNVERIFIED`.
+If the configured binding or required canonical source is missing, unreadable, moved without a compatible migration, from a different repository generation, or cannot be verified, terminate as `CONTROL_SOURCE_MISSING` or `CONTROL_SOURCE_UNVERIFIED`.
 
-**Missing control source is never permission to reconstruct, restore, delete-and-recreate, or replace it from conversational memory, archive history, an earlier repository generation, old Scheduled Task text, or another consumer.**
+**Missing control source is never permission to reconstruct, restore, delete-and-recreate, or replace it from conversational memory, archive history, an earlier repository generation, old Scheduled Task text, another consumer, or a stale branch.**
+
+## One material action
+
+Each run selects at most one highest-value material action. `NO_ACTION` is valid. Recurring schedules are not work-generation quotas.
+
+Restore current Issues, PRs, branches, reviews, checks, release state, continuations, failures, and dependencies before selection. Live state overrides stale checkpoints.
 
 ## Role-owned Issue lifecycle
 
@@ -64,6 +70,21 @@ Before deleting or moving a required path, the acting role must identify the cur
 
 The repository binding defines one trusted integration ref (for example `main`, `master`, `trunk`, or a governed release/integration branch). Shared Harness semantics refer to that configured trusted ref rather than assuming a branch name.
 
+For material source changes:
+
+```text
+current trusted-ref exact SHA
+-> one short-lived topic branch
+-> implementation and validation
+-> frozen candidate
+-> producer-distinct review
+-> adoption authority
+-> expected-head integration to trusted ref
+-> verify trusted ref
+-> close/update owner when actually done
+-> delete merged head branch
+```
+
 - **Worker / Producer** — performs source changes on a topic/candidate branch distinct from the configured trusted integration ref and opens or updates a PR. Never directly authors source on the trusted ref.
 - **Supervisor** — restores state, reconciles ownership/dependencies/branches, and routes work. It does not implement source or directly author the trusted ref.
 - **Independent Reviewer** — reviews the frozen exact candidate and persists a verdict. It does not modify, rebase, or sync the candidate.
@@ -73,53 +94,77 @@ An emergency direct trusted-ref remediation is outside ordinary automation and r
 
 ## Branch lifecycle
 
-Automation performs material source changes on candidate/topic branches distinct from the configured trusted integration ref.
+- Restore and continue one existing valid branch/PR before opening a duplicate.
+- Interrupted work remains active only when its owner, scope, candidate, and continuation are still valid.
+- A candidate/topic branch may be removed only after verifying that its material delta is integrated, fully superseded by an identified integrated/reviewed replacement, or intentionally abandoned under current authority with no unique required delta.
+- Never classify a branch as cleanup-eligible merely because its name differs from `main`; first resolve whether it is the configured trusted integration ref, a protected release/integration ref, or an active governed work ref.
+- If a branch contains unfinished material work and is not actively owned, the Supervisor routes continuation to completion, validation, review, and integration rather than silently abandoning or deleting it.
+- Superseded, empty, merged, or experiment-only branches are closed/deleted only after verifying no unique required delta remains.
+- A merged branch that remains because cleanup failed is cleanup debt, not a new work source.
+- No role treats deleting/recreating files on the trusted ref as routine reconciliation.
+- After successful integration, remove the merged candidate branch when repository capabilities permit and verify ref absence before reporting cleanup complete.
 
-A candidate/topic branch may be removed only after verifying one of:
-
-- its material delta is integrated into the configured trusted ref;
-- it is fully superseded by an identified integrated/reviewed replacement;
-- it is intentionally abandoned under current authority with no unique required delta.
-
-Never classify a branch as cleanup-eligible merely because its name differs from `main`; first resolve whether it is the configured trusted integration ref, a protected release/integration ref, or an active governed work ref.
-
-If a branch contains unfinished material work and is not actively owned, the Supervisor routes continuation to completion, validation, review, and integration rather than silently abandoning or deleting it.
-
-After successful integration, remove the merged candidate branch when repository capabilities permit and verify ref absence before reporting cleanup complete.
+Repository branch/ruleset protection should enforce the same boundary where the hosting platform permits it.
 
 ## Failure, self-recovery, and upward reporting
 
-Self-recovery is allowed within current authority, but silent failure is not.
+`SELF_RECOVERY_ALLOWED != SILENT_FAILURE_ALLOWED`.
+
+A material failure records a bounded public-safe or private-scoped handoff containing the work/target identity, affected stage, impact, attempted recovery class, current state, blocker fingerprint when useful, and accountable next owner. Do not persist private chain-of-thought.
 
 ```text
 FAILURE_OBSERVED
 -> report material failure state to organizational/control owner
--> bounded self-recovery when safe and authorized
+-> bounded recovery inside current authority
 -> RECOVERED | DEGRADED | BLOCKED
--> unresolved BLOCKED state escalates upward
+-> accountable higher owner is informed
+-> unresolved responsibility is rerouted/escalated
+-> Principal/admin is interrupted only when a reserved human action remains
 ```
 
-A GitHub Issue is durable work/evidence, not proof that organizational reporting occurred. The highest applicable control owner re-evaluates unresolved failures and asks the administrator/user only when administrator authority, reserved judgment, credentials/access, or another genuinely human-only action is required.
+A GitHub Issue is durable work/evidence, not proof that organizational reporting occurred. Retries are finite and deduplicated. Repeated failure with the same approach triggers decomposition, dependency/capability/authority/state-model analysis, alternative routing, or rollback rather than blind repetition. Unrelated authorized work continues unless the failure is a real prerequisite or safety stop.
 
-Repeated equivalent failures are deduplicated by stable target/failure/blocker identity rather than creating per-run Issue/comment noise.
+## Scheduled-task reconciliation
+
+Repository desired state and manager runtime state are compared by stable task identity, role/binding, enabled state, cadence, and prompt source.
+
+- Update existing physical tasks in place.
+- Do not create replacements when a unique matching task exists.
+- Task-manager prompt text remains a thin pointer.
+- Population/cadence changes require explicit applicable authority and normal review.
+- The task itself must not modify its own population or cadence.
 
 ## Release tagging
 
 Release/tag creation is separate from ordinary implementation/adoption authority.
 
-When a higher management/Governor role has explicit standing release-tag authority, it may create a release tag only after verifying:
+A top-level management/Governor role may create a SemVer release tag, with or without a conventional leading `v`, only when explicit standing release-tag authority covers the repository and release class.
 
-- the exact integrated trusted-ref commit;
-- package/release version consistency;
-- required CI/release checks and current release policy;
-- no unresolved material review/blocker;
-- expected tag-triggered release behavior.
+Before tagging, verify:
 
-Tagging must not be used to bypass candidate review, and a failed release workflow remains a material failure requiring diagnosis/reporting.
+- the target is the exact current trusted-ref commit at tag creation time;
+- all release source changes were integrated through reviewed PRs;
+- required exact-SHA CI/release checks are green and no material review/blocker remains;
+- every publishable package uses the tag version after removing an optional leading `v`;
+- public-information and package-content checks pass;
+- the tag and GitHub Release do not already exist;
+- required registry versions do not already exist, or the release workflow can safely skip them idempotently;
+- release notes and metadata are public-safe;
+- rollback/remediation ownership is clear.
+
+The management/Governor role pushes only the verified tag. Tag push, not a GitHub Release publication event, is the automatic release entrypoint. The repository release workflow owns package publication and GitHub Release creation.
+
+The workflow must validate the immutable tag source and require it to remain in trusted-ref ancestry. Exact-trusted-ref applies at tag creation; a later reviewed trusted-ref advance does not invalidate an already-created in-flight release whose immutable tag source remains in ancestry. A failed release workflow remains a material failure requiring diagnosis/reporting and may be resumed idempotently when its release contract permits.
+
+Tagging does not authorize source edits, direct package publication, deployment, scheduler topology changes, or bypass of a reserved release decision.
 
 ## Scheduler self-modification boundary
 
 Ordinary role execution does not create, delete, enable, disable, or change cadence/population of physical Scheduled Tasks merely because the runtime exposes those controls. Task-topology changes require explicit management authority.
+
+## Effect and recursive improvement
+
+After material adoption, observe whether the mechanism reduces early exit, overwork, stale branches, failure silence, prompt drift, or release errors without increasing ceremony/noise. Regressive or duplicate machinery is narrowed, removed, or superseded through the same lifecycle.
 
 ## Completion
 

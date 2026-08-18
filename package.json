@@ -8,6 +8,10 @@
   ],
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NewChoBo/harness.git"
+  },
   "engines": {
     "node": ">=20"
   },
@@ -26,6 +30,7 @@
     "dist",
     "schemas",
     "standard",
+    ".newchobo/harness",
     "README.md",
     "LICENSE"
   ],
@@ -35,16 +40,20 @@
     "test": "vitest run",
     "lint": "eslint src test",
     "lint:fix": "eslint src test --fix",
-    "release:check": "npm run validate",
-    "release:publish:core": "npm publish --access public --tag alpha",
+    "validate:workspace": "node scripts/validate-workspace-packages.mjs",
+    "validate:public": "node scripts/check-public-boundary.mjs",
+    "validate": "npm run lint && npm run typecheck && npm run test && npm run build && npm run validate:workspace && npm run validate:public",
+    "validate:strict": "npm run format:check && npm run validate",
+    "release:check": "npm run validate:strict",
+    "release:publish:root": "npm publish --access public --tag alpha",
+    "release:publish:engine": "npm --workspace @newchobo/harness-core publish --access public --tag alpha",
     "release:publish:workflows": "npm --workspace @newchobo/harness-workflow-coding publish --access public --tag alpha && npm --workspace @newchobo/harness-workflow-novel publish --access public --tag alpha && npm --workspace @newchobo/harness-workflow-research publish --access public --tag alpha",
-    "release:publish": "npm run release:publish:core && npm run release:publish:workflows",
+    "release:publish": "npm run release:publish:root && npm run release:publish:engine && npm run release:publish:workflows",
     "release": "npm run release:check && npm run release:publish",
-    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\" \"schemas/**/*.json\" \"standard/**/*.{md,yaml}\" \"examples/**/*.{md,yaml}\" package.json \"tsconfig*.json\" vitest.config.ts",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"schemas/**/*.json\" \"standard/**/*.{md,yaml}\" \"examples/**/*.{md,yaml}\" package.json \"tsconfig*.json\" vitest.config.ts",
+    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.mjs\" \"schemas/**/*.json\" \"standard/**/*.{md,yaml}\" \"examples/**/*.{md,yaml}\" \"packages/**/*.{md,yaml,json,ts}\" \".newchobo/**/*.md\" AGENTS.md README.md CONTRIBUTING.md SECURITY.md package.json \"tsconfig*.json\" vitest.config.ts \".github/workflows/*.yml\"",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.mjs\" \"schemas/**/*.json\" \"standard/**/*.{md,yaml}\" \"examples/**/*.{md,yaml}\" \"packages/**/*.{md,yaml,json,ts}\" \".newchobo/**/*.md\" AGENTS.md README.md CONTRIBUTING.md SECURITY.md package.json \"tsconfig*.json\" vitest.config.ts \".github/workflows/*.yml\"",
     "format:write": "npm run format",
-    "fix": "npm run lint:fix && npm run format:write",
-    "validate": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build"
+    "fix": "npm run lint:fix && npm run format:write"
   },
   "dependencies": {
     "ajv": "^8.17.1",
