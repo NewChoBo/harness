@@ -41,10 +41,22 @@ After resolution, validation checks at least:
 - enabled public-boundary forbidden terms do not appear in the effective workflow or referenced guidance;
 - result evidence satisfies the result schema and exact reviewed candidate identity is consistent.
 
+## Public-boundary field
+
+`public_boundary.enabled` declares that the effective workflow expects public-safe persistence. It composes with the repository's canonical `protocol/public-information-boundary`; it is not a replacement for that semantic rule.
+
+`public_boundary.forbidden_terms` is an optional bounded local guard for known literal terms. It is **not** a universal DLP mechanism and must not be treated as proof that content is safe merely because no listed term matched.
+
+For a public shared Harness preset, do not publish real confidential customer/project/repository identifiers merely to populate `forbidden_terms`. Actual confidential term lists belong in an authorized private consumer/project overlay or private validation environment. Shared public examples should normally omit the list entirely or use clearly synthetic fixture-only terms when testing validator behavior.
+
 ## Consumer overlays
 
-Consumer repositories may add product/domain ownership, validation lanes, source gates, write scopes, result extensions, and routing policy. They must not edit vendored upstream Harness files; consumer changes belong in local overlays.
+Consumer repositories may add product/domain ownership, validation lanes, source gates, write scopes, result extensions, public-boundary local guards, and routing policy. They must not edit vendored upstream Harness files; consumer changes belong in local overlays.
+
+Private consumer evidence, confidential identifiers, runtime-only credentials, and private automation/control state remain private even when the consumer uses a public Harness base.
 
 ## Scheduler boundary
 
 The Harness does not define cadence or active task population. Scheduler configuration answers **when**. The resolved preset answers **what**. Result/checkpoint state answers **what happened**.
+
+Scheduled execution additionally follows `protocol/automation-operation`: the physical task remains a thin pointer, missing canonical control source fails closed, and ordinary role execution does not self-modify scheduler population/cadence.
