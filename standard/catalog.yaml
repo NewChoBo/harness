@@ -70,6 +70,16 @@ spec:
       provenance:
         - docs/decisions/0002-supervisor-control-first.md
         - docs/decisions/0004-hierarchical-approval-enables-self-evolution.md
+    - id: protocol/public-information-boundary
+      kind: Protocol
+      path: standard/protocols/public-information-boundary.md
+      representation: narrative
+      provenance: docs/decisions/0013-public-by-default-information-boundary.md
+    - id: protocol/automation-operation
+      kind: Protocol
+      path: standard/protocols/automation-operation.md
+      representation: narrative
+      provenance: docs/decisions/0014-repository-owned-automation-and-trusted-ref-safety.md
     - id: protocol/checkpoint-handoff
       kind: Protocol
       path: standard/protocols/checkpoint-handoff.md
@@ -125,6 +135,8 @@ spec:
         - docs/decisions/0006-decision-safety-and-pre-adoption-review.md
         - docs/decisions/0009-adaptive-effort-and-convergence.md
         - docs/decisions/0010-bounded-execution-outcome-receipts.md
+        - docs/decisions/0013-public-by-default-information-boundary.md
+        - docs/decisions/0014-repository-owned-automation-and-trusted-ref-safety.md
     - id: checklist/pre-adoption-review
       kind: Checklist
       path: standard/checklists/pre-adoption-review.md
@@ -133,6 +145,8 @@ spec:
         - docs/decisions/0006-decision-safety-and-pre-adoption-review.md
         - docs/decisions/0009-adaptive-effort-and-convergence.md
         - docs/decisions/0010-bounded-execution-outcome-receipts.md
+        - docs/decisions/0013-public-by-default-information-boundary.md
+        - docs/decisions/0014-repository-owned-automation-and-trusted-ref-safety.md
     - id: checklist/translation-review
       kind: Checklist
       path: standard/checklists/translation-review.md
