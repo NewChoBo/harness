@@ -1,205 +1,149 @@
-# Agent Harness
+# NewChoBo Harness
 
-`agent-harness` is a reusable **agent/workflow governance and control-plane Harness** for GPT/Codex-style systems.
+NewChoBo Harness is a reusable **agent/workflow governance and control-plane Harness** for compatible AI agents, runtimes, and workflow systems.
 
-It defines shared workflow methodology, authority/review semantics, evidence/state conventions, install/overlay composition, and recursive improvement without absorbing consumer-specific product/domain policy.
+It combines a zero-runtime-readable Semantic Harness with optional executable validation/composition tooling. The repository is the public canonical source for reusable Harness semantics and public package candidates; consumer-specific product/domain policy remains in consumer overlays.
+
+## Public repository boundary
+
+This repository is public. Treat source files, commit/branch/tag metadata, Issues, Pull Requests, reviews/comments, workflow logs/artifacts, releases, examples, fixtures, generated outputs, and package/documentation metadata as public disclosure surfaces.
+
+If information is not clearly safe for public disclosure, do not persist it here. Private consumer/project/customer evidence, credentials, runtime-only private state, raw private prompts/transcripts, private repository/automation coordinates, and unpublished private-domain material stay at their authorized private source.
+
+The canonical operational rule is [`protocol/public-information-boundary`](standard/protocols/public-information-boundary.md).
 
 ## Authority of this README
 
-This root README is a **human-readable overview/projection**, not an independently authoritative operational policy surface. It summarizes and links the current architecture and Standard for discoverability.
+This README is a human-readable projection. Shared operational role/protocol/checklist/profile semantics are canonical under [`standard/`](standard/README.md), with resource identity/provenance indexed by [`standard/catalog.yaml`](standard/catalog.yaml).
 
-For shared operational role/protocol/checklist semantics, the canonical resources under [`standard/`](standard/README.md) control. `standard/README.md` defines the Standard/canonicality relationship and [`standard/catalog.yaml`](standard/catalog.yaml) identifies canonical resource paths, provenance metadata, and Decision-record authority/canonicality metadata. If this overview conflicts with a canonical Standard resource, the canonical Standard resource wins and this README must be corrected as a derived projection.
-
-Architecture/decision documents remain governed by their explicitly declared canonicality/provenance relationship; this README does not supersede them.
+If this overview conflicts with a canonical Standard resource, the Standard resource controls and this projection should be corrected.
 
 ## Semantic Resource Model first
 
-Agent Harness is **not Markdown-first, YAML-first, JSON-first, or TypeScript-first** as an architectural rule.
-
-The canonical abstraction is the **Semantic Resource Model**: resource identities, relationships, authority, lifecycle, state, evidence, composition, provenance, compatibility, and invariants.
+The architectural source of truth is the **Semantic Resource Model**: resource identities, relationships, authority, lifecycle, state/evidence, composition, provenance, compatibility, and invariants.
 
 ```text
 Semantic Resource Model
-        +-> structured resources (YAML / JSON / equivalent)
-        +-> typed models / APIs / controllers
-        +-> Markdown / TXT narrative guidance and projections
+        +-> Standard narrative/structured resources
+        +-> workflow presets and consumer overlays
+        +-> typed models / validators / CLIs
+        +-> provider/runtime projections
 ```
 
-During early v0.x, text may carry much of the working specification because it is cheap to author, review, diff, and consume directly. That is a bootstrap tactic, not permanent source-of-truth policy.
+Markdown/YAML/JSON/TypeScript are representations, not the architecture itself. Stable machine-governed resources may become more structured when that materially improves reliability/interoperability, without creating a competing policy model.
 
-Stable machine-governed resources may move to structured canonical representation when structure materially improves reliability or interoperability. Narrative text remains appropriate for rationale, examples, research, long guidance, migration notes, and human-readable projections.
+## Current repository architecture
 
-When multiple representations describe the same resource, exactly one authoritative representation and its provenance/derivation relationship must be explicit.
+The repository is a pnpm workspace.
 
-## Current v0.x goal: zero-runtime semantic bootstrap
+```text
+standard/                         canonical shared semantics
+schemas/                          workflow/result schemas
+src/ + test/                      repository/reference preset CLI + tests
+packages/engine/                  @newchobo/harness-core
+packages/harness-workflow-coding/ public coding workflow package candidate
+packages/harness-workflow-novel/  public generic fiction/narrative workflow package candidate
+packages/harness-workflow-research/ public research workflow package candidate
+.newchobo/harness/                public-safe NewChoBo Harness repository metadata/bootstrap
+.github/workflows/                CI validation
+```
 
-The first usable Harness must work directly for GPT-style agents without requiring a Harness-specific runtime, package manager, resolver binary, or controller.
+### Root workspace
 
-The immediate goal is to stabilize shared semantics through real consumer use.
+The root `@newchobo/harness` package is currently private and acts as the repository development/validation workspace plus the reference `agent-harness` preset CLI. It is not the public package publication contract merely because it has package metadata.
+
+### Core package
+
+`packages/engine` is the public package candidate `@newchobo/harness-core`. It validates/resolves canonical Harness catalog resources. Package publication remains a separately governed release action.
+
+### Workflow packages
+
+The coding, novel, and research packages provide generic declarative workflow defaults. Project-specific branch/release rules, customer/product policy, private evidence, canon, style, validation commands, and secret/private term inventories remain consumer-local.
+
+The generic novel package is intentionally fiction/narrative-neutral; private or specialized genre extensions belong in separate consumer/domain extensions rather than public Core defaults.
+
+## Zero-runtime remains first-class
+
+Packageization does **not** make a runtime/package manager mandatory for the semantic Harness. Compatible agents can still consume the Standard resources directly. Executable tooling is an optional validation/composition projection over the same semantics.
 
 ## Core responsibilities
 
-- **Governor / Higher Authority** — adopts or rejects material candidates after evidence and pre-adoption review.
-- **Supervisor** — restores control state, routes ownership/dependencies, tracks evidence, and coordinates recursive improvement.
-- **Worker / Implementer** — implements one authorized decision-ready change and stops at a candidate.
-- **Independent Reviewer** — independently reassesses the frozen final candidate before adoption.
-- **Researcher** — gathers evidence, alternatives, counterexamples, and uncertainty-reducing findings.
+- **Governor / Higher Authority** — adopts/rejects material exact candidates after evidence and independent review.
+- **Supervisor** — restores control state, routes ownership/dependencies, aggregates failure/escalation state, and coordinates recursive improvement.
+- **Worker / Implementer** — implements one authorized decision-ready candidate and stops at `CANDIDATE_READY`.
+- **Independent Reviewer** — independently reassesses the frozen exact candidate before adoption.
+- **Researcher** — reduces uncertainty with evidence, alternatives, counterexamples, and falsifiers.
 
-Consumers may use different names/topologies as long as the required authority and independence semantics remain explicit.
+Producer and Independent Reviewer remain distinct for material candidates.
 
-## Standard resources
-
-The first reusable Standard Harness set lives under [`standard/`](standard/README.md).
-
-- [`standard/catalog.yaml`](standard/catalog.yaml) is authoritative only for resource IDs, kinds, canonical paths, representation metadata, Decision provenance, and Decision-record authority/canonicality metadata declared under `spec.canonicality`.
-- [`standard/roles/`](standard/roles/) defines the five initial responsibility families.
-- [`standard/protocols/`](standard/protocols/) defines the shared control, change-safety, adoption, audit/escalation, and handoff semantics.
-- [`standard/checklists/`](standard/checklists/) contains concise first-party and pre-adoption verification gates.
-- [`examples/software-project/`](examples/software-project/README.md) and [`examples/fiction-media/`](examples/fiction-media/README.md) demonstrate neutral consumer composition.
-
-The catalog does **not** duplicate role/protocol behavior. Each referenced narrative resource remains authoritative for its own semantics until a reviewed structured canonical representation explicitly supersedes it.
-
-## Decision Safety Gate
-
-Conversational input is not automatically an execution order.
-
-Material input is interpreted with semantics equivalent to:
-
-```text
-DIRECTIVE / APPROVAL       -> may authorize mutation within delegated authority
-PROPOSAL / QUESTION        -> analyze and recommend; no mutation by default
-BRAINSTORM / AMBIGUOUS     -> exploratory analysis only
-standing delegated mandate -> may authorize the work already covered by that mandate
-```
-
-Before an authorized material change, perform proportionate consequence analysis: benefits, drawbacks, side effects, alternatives, reversibility, compatibility/interoperability, maintenance complexity, validation/falsifier, and authority/security/privacy/resource impact.
-
-This allows non-expert users to ask exploratory questions without accidentally rewriting project policy.
-
-## Material change lifecycle
+## Material lifecycle
 
 ```text
 input / evidence
--> intent classification
--> analysis only OR authorized change
--> pre-change consequence analysis
--> Worker implementation
+-> intent + authority classification
+-> consequence analysis
+-> Worker candidate
 -> Worker self-check
--> CANDIDATE_READY (frozen effective candidate)
--> PRE_ADOPTION_REVIEW
+-> CANDIDATE_READY
+-> producer-distinct PRE_ADOPTION_REVIEW
 -> REVIEW_PASSED
--> Governor / higher-authority adoption decision
--> integration
+-> Governor/adopter integration
 -> post-adoption effect validation
 ```
 
-`IMPLEMENTATION_COMPLETE`, `CANDIDATE_READY`, and `REVIEW_PASSED` are explicitly **not** adoption.
+Implementation completion and review PASS are not adoption.
 
-For material changes, the Producer/Worker and Independent Reviewer must be distinct identities/owners.
+## Scheduled automation boundary
 
-## Pre-Adoption Review
+Recurring execution follows [`protocol/automation-operation`](standard/protocols/automation-operation.md).
 
-The final candidate is reassessed **after implementation is complete and before integration**.
+Physical Scheduled Tasks are thin pointers into current repository-owned public-safe bindings under [`.newchobo/harness/`](.newchobo/harness/). Missing/unverifiable canonical control source fails closed; old paths are never reconstructed from memory/archive/previous repository generations.
 
-Review covers the original goal/scope, actual diff/effective resources, validation, new drawbacks or regressions, complexity, alternatives visible after implementation, authority boundaries, producer/reviewer independence, interoperability, canonicality/provenance, rollback, anti-DSL constraints, and prior review findings.
+Worker source changes use candidate branches/PRs. Supervisor and Independent Reviewer do not directly author source on `main`. Governor integrates only the exact reviewed candidate through the repository integration mechanism. Failure self-recovery does not hide the failure from the organizational/control reporting path.
 
-A material change after PASS invalidates the review when it changes the effective candidate, including relevant head/base/control/resource/profile/overlay identities.
-
-## Recursive self-evolution
-
-Harness internals may evolve through the same governed path.
-
-A role may propose changes to itself, but material changes to that role's responsibilities or authority require final adoption **above the role being changed**. Authority expansion likewise requires a higher authority.
-
-The guardrail is explicit intent, hierarchical authority, independent pre-adoption review, provenance, rollback, and observed effect—not preservation of the current topology or file formats.
-
-## Declarative structured-resource boundary
-
-Structured Harness resources are configuration/state contracts, not a hidden programming language.
-
-Core formats must not grow arbitrary `eval`/expressions, user-defined loops/control flow, embedded scripts, executable templates, dynamic code loading, implicit network execution, callbacks, or effectively Turing-complete semantics.
-
-Bounded declarative composition is appropriate: stable references, enums, explicit precedence, finite selectors, schema constraints, and operations such as `extend`, `replace`, `disable`, and `add`.
-
-Complex computation, policy evaluation, reconciliation, retries, iteration, search, or side effects belong in explicit controller/runtime/policy-adapter implementations behind versioned interfaces.
-
-## Install + project overlay model
-
-A consumer can install/pin the shared Harness without editing the upstream copy, then specialize it locally.
+## Install + overlay model
 
 ```text
-installed Agent Harness base (consumer-read-only)
-        +
-optional shared profile
-        +
-project-local Harness overlay
-        +
-task / lane overlay
-        =
-effective Harness / workflow
+installed/pinned NewChoBo Harness base
++ optional shared profile/workflow package
++ project-owned overlay
++ task/lane overlay
+= effective workflow
 ```
 
-A neutral default layout may look like:
+Installed upstream resources remain upstream-owned/read-only from the consumer perspective. Consumer-specific policy/evidence belongs in local overlays and does not flow back into shared defaults without public-safe generalization and the normal candidate/review/adoption lifecycle.
 
-```text
-.agent-harness/
-  harness.yaml or harness.md
-  lock.yaml
-  vendor/agent-harness/<version>/
-  project/
-  workflows/
-  state/
+## Workflow preset contract
+
+Workflow preset v1 is documented in [`docs/preset-contract.md`](docs/preset-contract.md) and validated against [`schemas/preset.schema.json`](schemas/preset.schema.json).
+
+The preset format is declarative and bounded. It does not provide arbitrary eval, loops, embedded scripts, dynamic code loading, or hidden network execution.
+
+## Validation
+
+Repository validation uses pnpm as the lockfile/package-manager source of truth:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm validate
 ```
 
-Existing project-native layouts may remain in place and be mapped through a small consumer entrypoint. Agent Harness standardizes logical composition, not one mandatory directory structure.
+The aggregate validation checks repository formatting/type/test/build, `@newchobo/harness-core`, every `packages/harness-workflow-*` preset, and public-boundary structural rules.
 
-Conceptual precedence:
+Automated checks are evidence, not proof of semantic correctness or public safety. Material candidates still require exact producer-distinct review.
 
-```text
-upstream base
--> selected profile
--> project overlay
--> task/lane overlay
-```
+## Effect validation
 
-## Effective candidate identity
+Material adopted changes remain subject to effect evaluation:
 
-When multiple layers affect semantics, review the **effective candidate**, not only one commit.
+- `PENDING_EFFECT_VALIDATION`
+- `EFFECTIVE`
+- `INEFFECTIVE`
+- `REGRESSIVE`
+- `INCONCLUSIVE`
 
-Relevant identity may include candidate/head SHA, base/control SHA, Harness version/ref, profile identity, project/task overlay identities, and resource/schema versions.
-
-This prevents a review from silently carrying over after the underlying effective policy changes.
-
-## Open-source interoperability
-
-Shared/public Harness material must remain organization- and consumer-neutral. Consumer-specific paths, identifiers, evidence, product policy, canon/domain rules, and private coordination stay in the consumer overlay.
-
-The core must not require one repository provider, branch naming scheme, issue label set, scheduler/runtime, programming language, organization-specific authority name, or physical directory layout.
-
-Customization and conformance are separate: a project may replace defaults and still use Agent Harness, but must not claim conformance to a profile whose required invariant it replaced.
-
-## Repository and roadmap direction
-
-Keep the evolving specification, standard resources, profiles, adapters, conformance material, examples, and reference tooling in one repository until genuinely independent lifecycle/ownership/toolchain/security boundaries justify extraction.
-
-The roadmap follows semantic maturity rather than a file-format ladder:
-
-```text
-stabilize Semantic Resource Model
--> promote mature machine-governed resources to structured canonical data
--> add schema/conformance/reconciliation where observed failures justify it
--> expose typed/API/controller representations
--> add runtime/interoperability adapters
-```
-
-A tooling spike or reference implementation is evidence, not the architecture contract.
-
-## Adoption and effect validation
-
-Do not migrate every consumer workflow at once. Start with one reversible canary, compare effective semantics/authority, perform PRE_ADOPTION_REVIEW, adopt only after the applicable gate passes, observe real outcomes, and expand only when evidence supports it.
-
-After adoption, material changes remain `PENDING_EFFECT_VALIDATION` until evidence supports `EFFECTIVE`, `INEFFECTIVE`, `REGRESSIVE`, or `INCONCLUSIVE`.
+Ineffective/regressive mechanisms should be narrowed, reverted, or superseded instead of accumulating policy indefinitely.
 
 ## Status
 
-Early architecture/bootstrap. The Semantic Resource Model is being stabilized; no stable public machine schema/API has been released yet.
+Early v0.x architecture and package bootstrap. Public package metadata is experimental and does not by itself mean a release has been published or compatibility guarantees have stabilized.
