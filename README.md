@@ -162,6 +162,24 @@ upstream base
 -> task/lane overlay
 ```
 
+## Publishing and private extensions
+
+Current release layout:
+
+- `@newchobo/harness` (public): shared base engine, canonical standard resources, and public workflow packages.
+- private overlay project (separate repo): overlays only; add non-public constraints, sensitive workflow policies, and project-specific evidence policy.
+
+After publishing `@newchobo/harness`, private consumers should add dependency and overlay composition:
+
+```bash
+npm i @newchobo/harness@^0.1.0-alpha.0
+npm i @newchobo/harness-workflow-coding@^0.1.0-alpha.0 @newchobo/harness-workflow-novel@^0.1.0-alpha.0 @newchobo/harness-workflow-research@^0.1.0-alpha.0
+```
+
+`pnpm` users can switch this block to `pnpm add` without other changes.
+
+Private-only rules should live in a separate private overlay repository and must never be copied into public workflow presets.
+
 ## Effective candidate identity
 
 When multiple layers affect semantics, review the **effective candidate**, not only one commit.

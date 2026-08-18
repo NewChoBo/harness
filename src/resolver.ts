@@ -51,7 +51,11 @@ async function resolveNode(
     const cycle = [...stack.slice(stack.indexOf(filePath)), filePath]
       .map((path) => toRootRelative(rootDir, path))
       .join(' -> ');
-    throw new HarnessConfigError('INHERITANCE_CYCLE', `Preset inheritance cycle: ${cycle}`, filePath);
+    throw new HarnessConfigError(
+      'INHERITANCE_CYCLE',
+      `Preset inheritance cycle: ${cycle}`,
+      filePath,
+    );
   }
 
   await access(filePath).catch(() => {
@@ -224,6 +228,5 @@ function appendUnique(existing: string[], incoming: string[]): string[] {
 }
 
 function withoutExtends(document: PresetDocument): PresetDocument {
-  const { extends: _extends, ...rest } = document;
-  return { ...rest };
+  return { ...document, extends: undefined };
 }

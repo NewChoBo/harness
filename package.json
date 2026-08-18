@@ -1,8 +1,8 @@
 {
   "name": "@newchobo/harness",
-  "private": true,
+  "private": false,
   "version": "0.1.0-alpha.0",
-  "description": "Deterministic repository agent workflow harness and preset validator",
+  "description": "Reusable agent workflow harness core and public workflow overlays",
   "workspaces": [
     "packages/*"
   ],
@@ -33,16 +33,31 @@
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
+    "lint": "eslint src test",
+    "lint:fix": "eslint src test --fix",
+    "release:check": "npm run validate",
+    "release:publish:core": "npm publish --access public --no-git-checks",
+    "release:publish:workflows": "npm publish packages/harness-workflow-coding --access public --no-git-checks && npm publish packages/harness-workflow-novel --access public --no-git-checks && npm publish packages/harness-workflow-research --access public --no-git-checks",
+    "release:publish": "npm run release:publish:core && npm run release:publish:workflows",
+    "release": "npm run release:check && npm run release:publish",
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\" \"schemas/**/*.json\" \"standard/**/*.{md,yaml}\" \"examples/**/*.{md,yaml}\" package.json \"tsconfig*.json\" vitest.config.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"schemas/**/*.json\" \"standard/**/*.{md,yaml}\" \"examples/**/*.{md,yaml}\" package.json \"tsconfig*.json\" vitest.config.ts",
-    "validate": "pnpm run format:check && pnpm run typecheck && pnpm run test && pnpm run build"
+    "format:write": "npm run format",
+    "fix": "npm run lint:fix && npm run format:write",
+    "validate": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
     "ajv": "^8.17.1",
     "yaml": "^2.8.1"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@types/node": "^24.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.33.1",
+    "@typescript-eslint/parser": "^8.33.1",
+    "eslint": "^9.18.0",
     "prettier": "^3.6.2",
     "typescript": "^5.9.2",
     "vitest": "^4.1.10"

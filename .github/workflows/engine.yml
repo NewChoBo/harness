@@ -25,11 +25,16 @@ permissions:
 
 jobs:
   validate:
+    name: Engine Validate (${{ github.workflow }})
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm ci --ignore-scripts --no-audit --no-fund
-      - run: npm run validate
+          cache: 'npm'
+      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npm run release:check

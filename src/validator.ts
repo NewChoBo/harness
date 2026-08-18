@@ -145,9 +145,7 @@ export async function validateResultDocument(
     errors = bundledResultShapeErrors();
   }
 
-  const issues = valid
-    ? []
-    : errors.map((message) => issue('RESULT_SCHEMA_INVALID', '/', message));
+  const issues = valid ? [] : errors.map((message) => issue('RESULT_SCHEMA_INVALID', '/', message));
 
   if (isRecord(value) && isRecord(value.evidence)) {
     const candidateSha = value.evidence.candidate_sha;
