@@ -11,12 +11,16 @@
   "publishConfig": {
     "access": "public"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NewChoBo/harness.git"
+  },
   "files": [
     "README.md",
     "coding-overlay.md",
     "preset.yaml"
   ],
   "dependencies": {
-    "@newchobo/harness-core": "^0.1.0-alpha.0"
+    "@newchobo/harness": "^0.1.0-alpha.0"
   }
 }

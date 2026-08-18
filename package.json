@@ -37,7 +37,7 @@
     "lint:fix": "eslint src test --fix",
     "release:check": "npm run validate",
     "release:publish:core": "npm publish --access public --tag alpha",
-    "release:publish:workflows": "npm publish packages/harness-workflow-coding --access public --tag alpha && npm publish packages/harness-workflow-novel --access public --tag alpha && npm publish packages/harness-workflow-research --access public --tag alpha",
+    "release:publish:workflows": "npm --workspace @newchobo/harness-workflow-coding publish --access public --tag alpha && npm --workspace @newchobo/harness-workflow-novel publish --access public --tag alpha && npm --workspace @newchobo/harness-workflow-research publish --access public --tag alpha",
     "release:publish": "npm run release:publish:core && npm run release:publish:workflows",
     "release": "npm run release:check && npm run release:publish",
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\" \"schemas/**/*.json\" \"standard/**/*.{md,yaml}\" \"examples/**/*.{md,yaml}\" package.json \"tsconfig*.json\" vitest.config.ts",
