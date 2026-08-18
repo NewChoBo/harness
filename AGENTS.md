@@ -8,6 +8,18 @@ Build a small, versioned Harness that lets consumer repositories reuse agent rol
 
 The Harness owns shared methodology/governance/resource semantics. Consumers own product/domain policy.
 
+## Public repository boundary — hard rule
+
+**This repository is public. Assume every file, commit message, branch/tag name, Issue, Pull Request, review/comment, workflow log/artifact, release, example, fixture, generated output, and package/documentation artifact can be read and permanently copied by anyone.**
+
+If information is not clearly safe for public disclosure, **do not write it to this repository or any associated public GitHub/output surface**. Unknown disclosure safety is fail-closed.
+
+Never persist secrets/credentials, personal or sensitive data, private consumer/project/customer identities, private repository/Issue/PR/branch/automation coordinates, private operational evidence, raw private prompts/transcripts, or unpublished private-domain material that is not intentionally part of the public Harness product.
+
+Private evidence may inform Harness development only after it is minimized/generalized into a public-safe, consumer-anonymous finding. Public Issues and PRs are public work/evidence surfaces, not private escalation channels.
+
+The canonical operational rule is [`protocol/public-information-boundary`](standard/protocols/public-information-boundary.md). Do not put confidential denylists or private identity inventories in this public repository merely to enforce the boundary.
+
 ## North Star bootstrap
 
 Before material roadmap, architecture, workflow-topology, provider/runtime, or governance decisions, restore [`docs/north-star.md`](docs/north-star.md).
@@ -92,6 +104,19 @@ input / evidence
 
 `IMPLEMENTATION_COMPLETE`, `CANDIDATE_READY`, and `REVIEW_PASSED` are not `ADOPTED`.
 
+## Scheduled automation safety
+
+Recurring Harness execution follows [`protocol/automation-operation`](standard/protocols/automation-operation.md).
+
+- Physical Scheduled Tasks are thin runtime pointers; repository Standard/resources remain policy truth.
+- If a configured binding or required canonical source is missing/unverifiable, fail closed. **Never recreate a removed path from memory, an archive, an old repository generation, or prior Scheduled Task text.**
+- A repository/source-layout cutover invalidates stale path assumptions until current compatibility is re-resolved.
+- Worker source changes use topic/candidate branches and PRs; Worker never writes source files directly to `main`.
+- Supervisor and Independent Reviewer never write source files directly to `main`.
+- Governor integrates only the exact reviewed candidate through the repository integration mechanism, normally PR merge; Governor does not bypass review by directly authoring `main`.
+- Self-recovery does not permit silent failure. Material failure/recovery/blocker state remains visible to the organizational/control owner; creating an Issue alone is not completion of reporting responsibility.
+- Ordinary role runs never change Scheduled Task population/cadence merely because runtime tooling exposes that capability.
+
 ## Worker Self-Check
 
 Before reporting `CANDIDATE_READY`, verify:
@@ -102,6 +127,8 @@ Before reporting `CANDIDATE_READY`, verify:
 - applicable validation actually ran; skipped/unavailable is not PASS;
 - exact candidate identity and evidence;
 - canonicality/provenance consistency;
+- public-information classification for every public persistence surface;
+- trusted-ref mutation discipline when automation is involved;
 - material side-effect/regression awareness;
 - rollback/falsifier where material;
 - residual/systemic follow-up has been checked without expanding scope;
@@ -135,6 +162,7 @@ The Reviewer re-evaluates the finished candidate against the original goal and a
 - authority and approval boundaries;
 - producer/reviewer independence;
 - consumer/open-source interoperability;
+- public-information and trusted-ref mutation boundaries;
 - canonical representation/provenance and duplicate-source risk;
 - declarative-resource / anti-DSL boundary;
 - rollback/falsifier;
@@ -144,7 +172,7 @@ The Reviewer re-evaluates the finished candidate against the original goal and a
 
 ## Governor Approval
 
-Governor may integrate a material candidate only after verifying a fresh PRE_ADOPTION_REVIEW PASS for the current effective candidate, no unresolved material blocker, sufficient evidence/validation, authority to adopt, and acceptable rollback/consequences.
+Governor may integrate a material candidate only after verifying a fresh PRE_ADOPTION_REVIEW PASS for the current effective candidate, no unresolved material blocker, sufficient evidence/validation, authority to adopt, acceptable rollback/consequences, and satisfied public-information/automation boundaries.
 
 Any material candidate drift after PASS requires re-review.
 
@@ -195,7 +223,7 @@ Runtime prompt text is not automatically a higher canonical policy layer.
 
 ## Open-source boundary
 
-Shared/public Harness material must remain organization- and consumer-neutral. Do not publish private consumer names, paths, identifiers, credentials, or evidence in shared examples.
+Shared/public Harness material must remain organization- and consumer-neutral. Consumer-specific private policy/evidence remains in the consumer overlay or authorized private source.
 
 The core must not require one repository provider, branch naming scheme, issue label set, scheduler/runtime, programming language, directory layout, or organization-specific authority name.
 

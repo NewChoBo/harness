@@ -15,8 +15,6 @@ state:
   result: repository-defined-result
 public_boundary:
   enabled: true
-  forbidden_terms:
-    - PRIVATE_CONSUMER_EXAMPLE
 metadata:
   domain: software
   variant: coding

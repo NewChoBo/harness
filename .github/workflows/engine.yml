@@ -5,7 +5,8 @@ on:
     branches: [main]
     paths:
       - package.json
-      - package-lock.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
       - packages/engine/**
       - standard/catalog.yaml
       - .github/workflows/engine.yml
@@ -14,7 +15,8 @@ on:
       - main
     paths:
       - package.json
-      - package-lock.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
       - packages/engine/**
       - standard/catalog.yaml
       - .github/workflows/engine.yml
@@ -28,8 +30,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.14.0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm ci --ignore-scripts --no-audit --no-fund
-      - run: npm run validate
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @newchobo/harness-core validate

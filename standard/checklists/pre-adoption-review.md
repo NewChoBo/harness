@@ -27,6 +27,7 @@ For a frozen material candidate, verify:
 - diagnostic limit exits were proportionally checked for decomposition/approach/dependency/evidence/capability/ownership/validation/state/guidance/topology/provider/policy causes and mapped to existing classifications where possible rather than creating timeout taxonomy for its own sake;
 - limit-related Issue/comment creation was evidence-gated and deduplicated: one bounded stop alone did not create a work item, existing owners were restored first, and repeated automation did not emit duplicate Issues/comments for the same target + stable blocker/failure signature;
 - cross-scope, systemic, shared-Harness, repeated architectural, ownership/authority, or reserved-decision causes were routed to the Supervisor/applicable higher agent instead of being hidden inside endless same-owner retries;
+- material failure/self-recovery state remained visible to the organizational/control owner; a GitHub Issue was not treated as a substitute for recovery/handoff/upward reporting;
 - Critical/Falsification and Preservation/Constructive perspectives were both applied when required by the effective profile, with synthesis preserving successful behavior while still surfacing material defects/alternatives;
 - a completed dual-lens cycle with no material actionable delta did not trigger repeated first-party review of an unchanged candidate/evidence set without a new material purpose;
 - dual-lens producer/self-review was not misrepresented as this formal Independent Review;
@@ -40,6 +41,11 @@ For a frozen material candidate, verify:
 - first selected canary receipt obligations remain bounded: one durable proof may be required even for `NO_ACTION`, but unchanged later `NO_ACTION` runs remain noise-free unless a material delta/effect sample requires another receipt;
 - receipt persistence excludes raw prompts/transcripts, private chain-of-thought, secrets, unnecessary consumer-private content, and high-cardinality debug traces;
 - any self-authored receipt claim that materially supports review/effect/adoption is treated according to its actual trust/provenance and receives independent/tool/provider corroboration where the downstream claim requires it;
+- when any destination/collaboration/output surface is public, the candidate and associated public metadata are intentionally `PUBLIC_SAFE` under `protocol/public-information-boundary`; files, commit/branch/tag names, Issues/PRs, reviews/comments, logs/artifacts, releases and generated outputs were treated as disclosure surfaces rather than reviewing source files alone;
+- `UNKNOWN` public-disclosure safety remains blocked and is not converted into PASS merely because no structural/secret scanner fired;
+- when scheduled automation is involved, the candidate follows `protocol/automation-operation`: missing/moved canonical source fails closed instead of being restored from memory/archive/old task text/previous repository generation;
+- scheduled Worker source mutation uses a candidate branch/PR, Supervisor/Independent Reviewer do not directly author trusted-ref source, and Governor integration does not bypass exact-candidate review by directly editing `main`;
+- ordinary role execution does not create/delete/enable/disable tasks or change scheduler population/cadence merely because runtime tooling exposes those controls;
 - shared/public artifacts contain no consumer-private policy, project-specific confidential knowledge, personal/sensitive data, credentials/secrets, private identifiers, or private operational evidence;
 - any private evidence used to justify a shared rule is abstracted/minimized so the shared artifact does not disclose the underlying sensitive content;
 - reserved root/high-risk boundaries are correctly routed.
