@@ -180,6 +180,11 @@ npm i @newchobo/harness-workflow-coding@^0.1.0-alpha.0 @newchobo/harness-workflo
 
 Private-only rules should live in a separate private overlay repository and must never be copied into public workflow presets.
 
+## Data boundary declaration
+
+- This repository contains only public/shared methodology and does **not** include sensitive workflow rules, private evidence, explicit-content policy sets, or private operational data.
+- Sensitive policy content (for example explicit/novel-domain guardrails) must be managed in an isolated private repository and imported only as local overlay inputs.
+
 ## Effective candidate identity
 
 When multiple layers affect semantics, review the **effective candidate**, not only one commit.
