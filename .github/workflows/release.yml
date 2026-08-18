@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -25,7 +24,36 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
       - run: npm install --ignore-scripts --no-audit --no-fund
-      - run: npm run release
+      - run: npm run release:check
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Verify package version matches git tag
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          TAG_VERSION="${{ github.ref_name }}"
+          TAG_VERSION="${TAG_VERSION#v}"
+          if [ "$PACKAGE_VERSION" != "$TAG_VERSION" ]; then
+            echo "Tag version ($TAG_VERSION) does not match package version ($PACKAGE_VERSION)."
+            echo "Update package.json version before creating the tag."
+            exit 1
+          fi
+          if [[ "$TAG_VERSION" == *-alpha.* || "$TAG_VERSION" == *-beta.* || "$TAG_VERSION" == *-rc.* ]]; then
+            echo "dist_tag=alpha" >> "$GITHUB_OUTPUT"
+          else
+            echo "dist_tag=latest" >> "$GITHUB_OUTPUT"
+          fi
+        id: publish_meta
+      - name: Publish core package
+        run: npm publish --access public --tag ${{ steps.publish_meta.outputs.dist_tag }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish workflow overlays
+        run: |
+          npm --workspace @newchobo/harness-workflow-coding publish --access public --tag ${{ steps.publish_meta.outputs.dist_tag }}
+          npm --workspace @newchobo/harness-workflow-novel publish --access public --tag ${{ steps.publish_meta.outputs.dist_tag }}
+          npm --workspace @newchobo/harness-workflow-research publish --access public --tag ${{ steps.publish_meta.outputs.dist_tag }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
