@@ -4,6 +4,14 @@ on:
   push:
     tags:
       - 'v*'
+  release:
+    types:
+      - published
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name to publish (e.g. v0.1.0-alpha.1). Used for manual triggers.'
+        required: false
 
 permissions:
   contents: read
@@ -28,22 +36,35 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Verify package version matches git tag
+      - name: Resolve release metadata
+        id: publish_meta
         run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            TAG_NAME="${{ github.event.release.tag_name }}"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG_NAME="${{ github.event.inputs.tag_name }}"
+          else
+            TAG_NAME="${{ github.ref_name }}"
+          fi
+          if [ -z "$TAG_NAME" ]; then
+            echo "No tag name resolved." >&2
+            exit 1
+          fi
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          TAG_VERSION="${{ github.ref_name }}"
-          TAG_VERSION="${TAG_VERSION#v}"
+          TAG_VERSION="${TAG_NAME#v}"
+          echo "Resolved release tag: $TAG_NAME"
           if [ "$PACKAGE_VERSION" != "$TAG_VERSION" ]; then
             echo "Tag version ($TAG_VERSION) does not match package version ($PACKAGE_VERSION)."
             echo "Update package.json version before creating the tag."
             exit 1
           fi
+          echo "package_version=$PACKAGE_VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag_version=$TAG_VERSION" >> "$GITHUB_OUTPUT"
           if [[ "$TAG_VERSION" == *-alpha.* || "$TAG_VERSION" == *-beta.* || "$TAG_VERSION" == *-rc.* ]]; then
             echo "dist_tag=alpha" >> "$GITHUB_OUTPUT"
           else
             echo "dist_tag=latest" >> "$GITHUB_OUTPUT"
           fi
-        id: publish_meta
       - name: Publish core package
         run: npm publish --access public --tag ${{ steps.publish_meta.outputs.dist_tag }}
         env:
