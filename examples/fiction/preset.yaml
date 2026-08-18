@@ -1,0 +1,19 @@
+schema_version: 1
+kind: workflow_automation_preset
+id: fiction-producer-example
+extends:
+  - ../../standard/presets/base-worker.yaml
+protocols:
+  - ./fiction-overlay.md
+authority:
+  write_scopes:
+    - fiction/example-output/**
+  forbidden_write_scopes:
+    - fiction/canon/**
+source_gates:
+  - id: exact_source_revision
+    description: The consumer must define and recheck its exact source revision before material writing.
+    required: true
+metadata:
+  domain: fiction
+  example_only: true

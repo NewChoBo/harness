@@ -1,0 +1,15 @@
+schema_version: 1
+id: agent-common-self-check
+items:
+  - id: goal_acceptance
+    question: Is the requested outcome and its acceptance criteria actually satisfied?
+  - id: freshness
+    question: Did I recheck the relevant source, candidate, dependency, and work-item state?
+  - id: scope_ownership
+    question: Did I stay inside the declared concern, owner, and write scope?
+  - id: validation
+    question: Did required validation actually run without treating skipped or unavailable checks as passed?
+  - id: evidence
+    question: Is exact identity and material validation evidence present where applicable?
+  - id: handoff_state
+    question: Can another agent continue from durable state without conversational memory?

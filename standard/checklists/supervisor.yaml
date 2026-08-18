@@ -1,0 +1,11 @@
+schema_version: 1
+id: supervisor-completion
+items:
+  - id: evidence_matches_state
+    question: Do worker, reviewer, and research reports match observable repository/runtime evidence?
+  - id: ownership_dependency
+    question: Are ownership, dependencies, blockers, and required review routed correctly?
+  - id: hidden_exception
+    question: Is any high-severity, repeated, contradictory, or policy-sensitive condition being hidden by a success summary?
+  - id: next_action
+    question: Is the next highest-value action or upward decision explicit?

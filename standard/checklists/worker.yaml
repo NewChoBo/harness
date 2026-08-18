@@ -1,0 +1,9 @@
+schema_version: 1
+id: worker-self-check
+items:
+  - id: regression
+    question: Did the change preserve relevant existing behavior outside the accepted scope?
+  - id: contract_impact
+    question: Did I identify any API, schema, compatibility, persistence, or dependency impact?
+  - id: review_handoff
+    question: If independent review is required, is the exact candidate ready for that reviewer?

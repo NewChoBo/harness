@@ -1,0 +1,19 @@
+schema_version: 1
+kind: workflow_automation_preset
+id: software-supervisor-example
+extends:
+  - ../../standard/presets/base-supervisor.yaml
+source_gates:
+  - id: control_ref_fresh
+    description: Recheck the repository control ref before material routing or persistence.
+    required: true
+state:
+  checkpoint: repository-defined-checkpoint
+  result: repository-defined-result
+public_boundary:
+  enabled: true
+  forbidden_terms:
+    - PRIVATE_CONSUMER_EXAMPLE
+metadata:
+  domain: software
+  example_only: true

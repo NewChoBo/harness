@@ -1,10 +1,8 @@
-# Agent Harness — North Star
-
-This public North Star text is a neutralized template surface derived from the original **Newchobo harness**.
+# NewChoBo Harness — North Star
 
 ## Authority
 
-This document is the authoritative **product-direction North Star** for Agent Harness.
+This document is the authoritative **product-direction North Star** for NewChoBo Harness.
 
 It defines **why the Harness exists and the desired end state**. It does not replace the operational semantics in `standard/**`, authority/review gates, consumer-owned policy, or exact work-item acceptance criteria.
 
@@ -69,39 +67,6 @@ simple user goal
 Research is not an activity goal. Skip or bound it when it would not materially change the decision.
 
 When a user decision is genuinely required, present it in a way that minimizes user management load without falsely closing the solution space. Concrete decision-request mechanics belong in the Standard rather than this North Star.
-
-## Learn continuously from the evolving agent ecosystem
-
-Agent Harness should remain current with material advances in agent products, coding-agent systems, harness engineering, open protocols and standards, open-source frameworks, evaluation and safety research, and production engineering practice.
-
-Use a **reference-first, abstraction-last** approach. Before inventing a new Agent, Skill, Workflow, Provider, Extension, context/memory mechanism, evaluation mechanism, or other semantic abstraction, proportionally inspect whether mature external systems or current evidence already solve, simplify, constrain, or falsify the assumed problem.
-
-Relevant evidence may include, when material:
-
-- current official product/runtime/tool documentation and release notes;
-- mature agent and coding-agent products, including their agent/subagent, project-instruction, reusable-workflow, permission/sandbox, tool, context/memory, automation, isolation, and handoff structures;
-- open interoperability protocols and standards;
-- primary research and technical reports on agent harnesses, orchestration, context/memory, tool use, evaluation, verification, security, multi-agent systems, software agents, and observability;
-- strong open-source implementations and reproducible benchmark/evaluation sources;
-- credible production engineering case studies and documented failure modes.
-
-External systems are **reference implementations and evidence, not specifications or adoption authority**. Do not clone one provider into Harness Core, and do not reduce the Harness to a lowest-common-denominator model merely because providers differ. Preserve useful provider-native strengths in projections/adapters/extensions when they are not durable cross-provider semantics.
-
-The research horizon should be **continuous but delta-oriented**:
-
-```text
-current Harness uncertainty / roadmap / recurring failure
-+ material external ecosystem delta
--> bounded research horizon
--> primary/authoritative evidence + counterexamples
--> compare with current Harness semantics and effect evidence
--> confirm / narrow / supersede / reject / discover gap / NO_ACTION
--> route only material consequences through normal ownership/review/adoption/effect lifecycle
-```
-
-A new paper, product feature, release, benchmark, or standard revision is not by itself a reason to change the Harness. Research exists to reduce uncertainty, falsify stale assumptions, discover simpler or stronger mechanisms, expose obsolete Harness components, and improve decisions. `NO_ACTION` is a valid research result.
-
-Prefer current primary/authoritative sources for material technical claims, track relevant dates/versions and limitations when freshness matters, seek counterexamples, and revisit prior conclusions when stronger evidence appears. Avoid novelty chasing, product cloning, paper-as-policy, benchmark overfitting, and repeated research activity with no decision impact.
 
 ## Portable across providers and execution environments
 
@@ -224,16 +189,13 @@ For material architecture, governance, workflow, provider, or automation-topolog
 6. Does it make deterministic behavior more testable without creating a framework/DSL explosion?
 7. Does it make future sessions/agents better able to restore the same goal and continue coherently?
 8. Is there a simpler design with the same or better North Star alignment?
-9. Before inventing new semantic machinery, did we proportionally check whether mature products, standards, open-source systems, or current research already solve or falsify the problem?
-10. Is the decision based on sufficiently current evidence and explicit limitations rather than stale references, novelty, or one benchmark/provider?
 
 ## Non-goals
 
 - a giant implementation specification embedded in the North Star;
 - fixing current provider names, physical automation counts, or directory layout forever;
-- mandatory research for trivial work or continuous research activity with no decision value;
-- adopting features merely because a product, paper, benchmark, or standard is new;
+- mandatory research for trivial work;
 - replacing domain-specific consumer goals or overlays;
 - autonomy that bypasses authority, privacy, independent review, or reserved user decisions;
-- measuring success by issue count, comment volume, automation count, prompt length, number of agents, papers read, or research comments produced;
+- measuring success by issue count, comment volume, automation count, prompt length, or number of agents;
 - creating a proprietary agent communication, telemetry, scheduler, IAM, or workflow programming language when adapters to bounded external systems are sufficient.

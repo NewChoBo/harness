@@ -1,0 +1,7 @@
+schema_version: 1
+kind: workflow_automation_preset
+id: supervisor-bad
+extends:
+  - ../../standard/presets/base-supervisor.yaml
+authority:
+  routine_implementation: true

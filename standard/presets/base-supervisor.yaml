@@ -1,0 +1,31 @@
+schema_version: 1
+kind: workflow_automation_preset
+id: base-supervisor
+role:
+  id: supervisor
+  type: supervisor
+  path: ../roles/supervisor.md
+protocols:
+  - ../protocols/state-restore.md
+  - ../protocols/ownership-routing.md
+  - ../protocols/supervisor-completion.md
+  - ../protocols/conditional-deep-audit.md
+  - ../protocols/recursive-improvement.md
+  - ../protocols/upward-escalation.md
+  - ../protocols/checkpoint-handoff.md
+checklists:
+  common:
+    - ../checklists/common.yaml
+  role:
+    - ../checklists/supervisor.yaml
+delegation:
+  implementation: worker
+  independent_review: independent-reviewer
+  research: researcher
+authority:
+  routine_implementation: false
+  routine_source_review: false
+  may_review_own_nontrivial_output: false
+review:
+  required: false
+result_schema: ../../schemas/result.schema.json

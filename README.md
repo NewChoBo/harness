@@ -1,8 +1,6 @@
 # Agent Harness
 
-This repository is an open template derived from the original **Newchobo harness**. It is intentionally product-neutral and organized for public reuse.
-
-Agent Harness is a reusable **agent/workflow governance and control-plane Harness** for compatible AI agents, runtimes, and workflow systems.
+`agent-harness` is a reusable **agent/workflow governance and control-plane Harness** for GPT/Codex-style systems.
 
 It defines shared workflow methodology, authority/review semantics, evidence/state conventions, install/overlay composition, and recursive improvement without absorbing consumer-specific product/domain policy.
 
@@ -35,7 +33,7 @@ When multiple representations describe the same resource, exactly one authoritat
 
 ## Current v0.x goal: zero-runtime semantic bootstrap
 
-The first usable Harness must work directly for compatible AI agents/sessions without requiring a Harness-specific runtime, package manager, resolver binary, or controller.
+The first usable Harness must work directly for GPT-style agents without requiring a Harness-specific runtime, package manager, resolver binary, or controller.
 
 The immediate goal is to stabilize shared semantics through real consumer use.
 

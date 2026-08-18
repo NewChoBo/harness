@@ -1,0 +1,5 @@
+schema_version: 1
+kind: workflow_automation_preset
+id: cycle-b
+extends:
+  - ./cycle-a.yaml

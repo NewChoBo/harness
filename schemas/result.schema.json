@@ -1,0 +1,136 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://newchobo.dev/agent-harness/result.schema.json",
+  "title": "Agent Harness Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "workflow_id", "status", "evidence"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "workflow_id": { "type": "string", "minLength": 1 },
+    "status": {
+      "enum": [
+        "no_action",
+        "blocked",
+        "candidate",
+        "review_required",
+        "reviewed",
+        "complete",
+        "policy_change_request"
+      ]
+    },
+    "summary": { "type": "string" },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "candidate_sha": { "type": "string", "pattern": "^[0-9a-fA-F]{7,64}$" },
+        "validations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "status"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "status": { "enum": ["passed", "failed", "skipped", "unavailable"] },
+              "details": { "type": "string" }
+            }
+          }
+        },
+        "review": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["candidate_sha", "reviewer_id", "outcome"],
+          "properties": {
+            "candidate_sha": { "type": "string", "pattern": "^[0-9a-fA-F]{7,64}$" },
+            "reviewer_id": { "type": "string", "minLength": 1 },
+            "outcome": { "enum": ["passed", "changes_required", "blocked"] }
+          }
+        },
+        "blocker": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["code", "message"],
+          "properties": {
+            "code": { "type": "string", "minLength": 1 },
+            "message": { "type": "string", "minLength": 1 }
+          }
+        },
+        "upward_decision": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["question", "why_now"],
+          "properties": {
+            "question": { "type": "string", "minLength": 1 },
+            "why_now": { "type": "string", "minLength": 1 },
+            "recommended_default": { "type": "string" },
+            "deferred_impact": { "type": "string" }
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": { "enum": ["candidate", "review_required", "reviewed", "complete"] }
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence": { "required": ["candidate_sha"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "reviewed" } } },
+      "then": {
+        "properties": {
+          "evidence": { "required": ["review"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "complete" } } },
+      "then": {
+        "properties": {
+          "evidence": {
+            "required": ["validations"],
+            "properties": {
+              "validations": {
+                "minItems": 1,
+                "items": {
+                  "properties": {
+                    "status": { "const": "passed" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "blocked" } } },
+      "then": {
+        "properties": {
+          "evidence": { "required": ["blocker"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "policy_change_request" } } },
+      "then": {
+        "properties": {
+          "evidence": { "required": ["upward_decision"] }
+        }
+      }
+    }
+  ]
+}

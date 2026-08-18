@@ -1,0 +1,24 @@
+schema_version: 1
+kind: workflow_automation_preset
+id: base-independent-reviewer
+role:
+  id: independent-reviewer
+  type: reviewer
+  path: ../roles/reviewer.md
+protocols:
+  - ../protocols/state-restore.md
+  - ../protocols/independent-review.md
+  - ../protocols/self-check.md
+  - ../protocols/checkpoint-handoff.md
+checklists:
+  common:
+    - ../checklists/common.yaml
+  role:
+    - ../checklists/reviewer.yaml
+authority:
+  routine_implementation: false
+  routine_source_review: true
+  may_review_own_nontrivial_output: false
+review:
+  required: false
+result_schema: ../../schemas/result.schema.json

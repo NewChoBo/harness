@@ -1,0 +1,25 @@
+schema_version: 1
+kind: workflow_automation_preset
+id: base-worker
+role:
+  id: worker
+  type: worker
+  path: ../roles/worker.md
+protocols:
+  - ../protocols/state-restore.md
+  - ../protocols/self-check.md
+  - ../protocols/checkpoint-handoff.md
+checklists:
+  common:
+    - ../checklists/common.yaml
+  role:
+    - ../checklists/worker.yaml
+delegation:
+  independent_review: independent-reviewer
+authority:
+  routine_implementation: true
+  routine_source_review: false
+  may_review_own_nontrivial_output: false
+review:
+  required: true
+result_schema: ../../schemas/result.schema.json

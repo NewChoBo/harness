@@ -1,12 +1,10 @@
-# Agent Guide — Public Harness Template
+# Agent Guide — NewChoBo Harness
 
-This repository is an open template version of the original **Newchobo harness**.
-
-This repository defines reusable automation methodology, governance semantics, and control-plane contracts for compatible AI agents, runtimes, and workflow systems across repository, research, content, operations, and other domains.
+This repository defines reusable automation methodology, governance semantics, and control-plane contracts for GPT/Codex-style repository agents.
 
 ## Mission
 
-Build a small, versioned Harness that lets consumers reuse agent roles, protocols, checklists, routing, evidence, approval, state, overlays, and handoff conventions without copying large runtime/task prompts.
+Build a small, versioned Harness that lets consumer repositories reuse agent roles, protocols, checklists, routing, evidence, approval, state, overlays, and handoff conventions without copying large Scheduled Task prompts.
 
 The Harness owns shared methodology/governance/resource semantics. Consumers own product/domain policy.
 
@@ -207,7 +205,7 @@ Customization and conformance are separate: a project may replace defaults and s
 
 Structured resources, schemas, controllers, APIs, and typed models are implementation/representation layers of the same Semantic Resource Model. They must not create a parallel policy model.
 
-v0.x remains directly usable by compatible AI agents/sessions without mandatory Harness-specific runtime tooling. Introduce machine enforcement proportionally to observed failure modes.
+v0.x remains GPT-usable without mandatory Harness-specific runtime tooling. Introduce machine enforcement proportionally to observed failure modes.
 
 ## Effect validation
 

@@ -1,0 +1,7 @@
+schema_version: 1
+kind: workflow_automation_preset
+id: missing-ref
+extends:
+  - ../../standard/presets/base-worker.yaml
+protocols:
+  - ./does-not-exist.md

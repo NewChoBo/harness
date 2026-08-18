@@ -1,0 +1,9 @@
+schema_version: 1
+id: researcher-self-check
+items:
+  - id: source_quality
+    question: Is material external evidence current, authoritative enough, and correctly scoped?
+  - id: counterexample
+    question: Did I inspect a credible alternative, counterexample, or falsifier?
+  - id: applicability
+    question: Did I separate source claims from project applicability and my recommendation?

@@ -1,0 +1,9 @@
+schema_version: 1
+id: reviewer-self-check
+items:
+  - id: independence
+    question: Am I independent from production of the non-trivial candidate I am reviewing?
+  - id: exact_candidate
+    question: Did I review the exact current candidate identity rather than an older revision or summary?
+  - id: acceptance_evidence
+    question: Did I verify acceptance criteria and relevant validation evidence directly?

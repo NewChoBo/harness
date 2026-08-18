@@ -1,0 +1,107 @@
+#!/usr/bin/env node
+import { resolve } from 'node:path';
+
+import { stringify } from 'yaml';
+
+import { HarnessConfigError } from './errors.js';
+import { readStructuredFile } from './io.js';
+import { resolvePreset } from './resolver.js';
+import { syncHarness } from './sync.js';
+import { validateResultDocument, validateWorkflow } from './validator.js';
+
+async function main(): Promise<void> {
+  const [, , command, subject, ...rest] = process.argv;
+
+  if (!command || command === '--help' || command === '-h') {
+    printHelp();
+    return;
+  }
+
+  if (command === 'resolve') {
+    requireSubject(command, subject);
+    const rootDir = option(rest, '--root') ?? process.cwd();
+    const workflow = await resolvePreset(subject!, { rootDir });
+    process.stdout.write(stringify(workflow));
+    return;
+  }
+
+  if (command === 'validate') {
+    requireSubject(command, subject);
+    const rootDir = option(rest, '--root') ?? process.cwd();
+    const workflow = await resolvePreset(subject!, { rootDir });
+    const issues = await validateWorkflow(workflow, rootDir);
+    reportIssues(issues);
+    return;
+  }
+
+  if (command === 'validate-result') {
+    requireSubject(command, subject);
+    const schema = option(rest, '--schema');
+    const value = await readStructuredFile<unknown>(resolve(subject!));
+    const issues = await validateResultDocument(value, schema ? resolve(schema) : undefined);
+    reportIssues(issues);
+    return;
+  }
+
+  if (command === 'sync') {
+    const args = [subject, ...rest].filter(Boolean) as string[];
+    const target = option(args, '--target');
+    const source = option(args, '--source');
+    if (!target) {
+      throw new Error('sync requires --target <consumer-root>.');
+    }
+    const result = await syncHarness(resolve(target), source ? resolve(source) : undefined);
+    process.stdout.write(stringify(result));
+    return;
+  }
+
+  throw new Error(`Unknown command: ${command}`);
+}
+
+function option(args: string[], name: string): string | undefined {
+  const index = args.indexOf(name);
+  if (index < 0) {
+    return undefined;
+  }
+  const value = args[index + 1];
+  if (!value) {
+    throw new Error(`${name} requires a value.`);
+  }
+  return value;
+}
+
+function requireSubject(command: string, subject?: string): void {
+  if (!subject) {
+    throw new Error(`${command} requires a file path.`);
+  }
+}
+
+function reportIssues(issues: Array<{ code: string; path: string; message: string }>): void {
+  if (issues.length === 0) {
+    process.stdout.write('OK\n');
+    return;
+  }
+  for (const item of issues) {
+    process.stderr.write(`[${item.code}] ${item.path}: ${item.message}\n`);
+  }
+  process.exitCode = 1;
+}
+
+function printHelp(): void {
+  process.stdout.write('agent-harness\n\n');
+  process.stdout.write('  resolve <preset> [--root <dir>]\n');
+  process.stdout.write('  validate <preset> [--root <dir>]\n');
+  process.stdout.write('  validate-result <result> [--schema <file>]\n');
+  process.stdout.write('  sync --target <consumer-root> [--source <harness-root>]\n');
+}
+
+main().catch((error: unknown) => {
+  if (error instanceof HarnessConfigError) {
+    const path = error.path ? ` ${error.path}` : '';
+    process.stderr.write(`[${error.code}]${path}: ${error.message}\n`);
+  } else {
+    const message = error instanceof Error ? error.message : String(error);
+    process.stderr.write(`${message}\n`);
+  }
+  process.exitCode = 1;
+});
