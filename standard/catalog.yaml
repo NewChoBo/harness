@@ -70,6 +70,11 @@ spec:
       provenance:
         - docs/decisions/0002-supervisor-control-first.md
         - docs/decisions/0004-hierarchical-approval-enables-self-evolution.md
+    - id: protocol/automation-operation
+      kind: Protocol
+      path: standard/protocols/automation-operation.md
+      representation: narrative
+      provenance: docs/decisions/0013-repository-owned-scheduled-task-bindings.md
     - id: protocol/checkpoint-handoff
       kind: Protocol
       path: standard/protocols/checkpoint-handoff.md
