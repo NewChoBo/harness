@@ -1,0 +1,23 @@
+schema_version: 1
+kind: workflow_automation_preset
+id: harness-workflow-coding
+protocols:
+  - ./coding-overlay.md
+source_gates:
+  - id: control_ref_fresh
+    description: Recheck the repository control ref before material routing or persistence.
+    required: true
+  - id: reproducible_validation
+    description: Run repository-defined validation gates before handoff.
+    required: true
+state:
+  checkpoint: repository-defined-checkpoint
+  result: repository-defined-result
+public_boundary:
+  enabled: true
+  forbidden_terms:
+    - PRIVATE_CONSUMER_EXAMPLE
+metadata:
+  domain: software
+  variant: coding
+  example_only: true

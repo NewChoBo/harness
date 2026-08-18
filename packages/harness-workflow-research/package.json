@@ -1,0 +1,22 @@
+{
+  "name": "@newchobo/harness-workflow-research",
+  "version": "0.1.0-alpha.0",
+  "private": false,
+  "description": "Agent Harness workflow package for research and exploration work streams.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "README.md",
+    "research-overlay.md",
+    "preset.yaml"
+  ],
+  "dependencies": {
+    "@newchobo/harness-core": "workspace:*"
+  }
+}

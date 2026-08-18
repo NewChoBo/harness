@@ -1,0 +1,22 @@
+{
+  "name": "@newchobo/harness-workflow-coding",
+  "version": "0.1.0-alpha.0",
+  "private": false,
+  "description": "Agent Harness workflow package for coding/engineering work streams.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "README.md",
+    "coding-overlay.md",
+    "preset.yaml"
+  ],
+  "dependencies": {
+    "@newchobo/harness-core": "workspace:*"
+  }
+}

@@ -1,0 +1,13 @@
+schema_version: 1
+kind: workflow_automation_preset
+id: harness-workflow-novel
+protocols:
+  - ./novel-overlay.md
+source_gates:
+  - id: exact_source_revision
+    description: Recheck exact source revision before drafting/writes.
+    required: true
+metadata:
+  domain: fiction
+  variant: novel
+  public_scope: true

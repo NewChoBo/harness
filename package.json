@@ -1,7 +1,11 @@
 {
-  "name": "@newchobo/agent-harness",
+  "name": "@newchobo/harness",
+  "private": true,
   "version": "0.1.0-alpha.0",
   "description": "Deterministic repository agent workflow harness and preset validator",
+  "workspaces": [
+    "packages/*"
+  ],
   "type": "module",
   "license": "MIT",
   "engines": {

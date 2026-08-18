@@ -1,0 +1,16 @@
+schema_version: 1
+kind: workflow_automation_preset
+id: harness-workflow-research
+protocols:
+  - ./research-overlay.md
+source_gates:
+  - id: evidence_bundle_present
+    description: Keep evidence bundle attached until adoption review.
+    required: true
+  - id: counterexample_check
+    description: Run explicit counterexample checks before promotion.
+    required: true
+metadata:
+  domain: research
+  variant: research
+  public_scope: true
