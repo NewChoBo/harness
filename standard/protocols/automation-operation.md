@@ -19,12 +19,33 @@ At run start:
 1. resolve the configured repository and trusted control ref;
 2. freeze the exact control revision once;
 3. load the repository-owned binding and every required canonical resource from that same snapshot;
-4. restore only current durable state needed for the selected work;
-5. verify ownership, authority, candidate/review identity, dependencies, and public-safety constraints before mutation.
+4. restore current role-relevant open Issues/PRs plus only the durable state needed for the selected work;
+5. reconcile existing ownership, candidate/branch/review/dependency/blocker state before creating new work;
+6. verify authority and public-safety constraints before mutation.
 
 If the configured binding or required canonical source is missing, unreadable, moved without a compatible migration, or cannot be verified, terminate as `CONTROL_SOURCE_MISSING` or `CONTROL_SOURCE_UNVERIFIED`.
 
 **Missing control source is never permission to reconstruct, restore, delete-and-recreate, or replace it from conversational memory, archive history, an earlier repository generation, old Scheduled Task text, or another consumer.**
+
+## Role-owned Issue lifecycle
+
+Every recurring role is responsible for the lifecycle of Issues that are genuinely inside that role's current scope/ownership. This is scoped ticket awareness, not a requirement for every role to sweep the entire repository backlog.
+
+At each run, before selecting new work:
+
+1. inspect current open Issues and PRs relevant to the role's scope, including explicitly assigned/routed work and durable handoffs;
+2. restore any existing owned Issue before creating a duplicate work item;
+3. reconcile the Issue against current branch/PR/review/CI/integration/effect evidence;
+4. continue or recover owned unfinished work when it remains valid and actionable;
+5. when the Issue's current done/acceptance criteria are verified **and every required linked source-change review/integration gate for that Issue is satisfied**, persist only useful completion evidence and close the owned Issue in the same run when capability and authority permit;
+6. when an owned Issue is duplicate, superseded, or no longer required, close it only after identifying the current replacement/evidence and when that disposition is within role authority;
+7. if the Issue belongs to another role/owner, do not close or silently take it over—route/handoff it to the proper owner and preserve the dependency/blocker relation.
+
+For a source-change Issue, an open linked PR normally means the Issue remains open while required review/integration is unresolved. A repository may define an explicit implementation-only Issue whose done state is a durable handoff to another owned work item, but that handoff must be explicit; do not infer it merely because a producer finished coding.
+
+A role must not leave a verified-complete Issue open merely because implementation or merge finished. Conversely, a merged PR or a completion report alone is not enough to close an Issue unless its actual acceptance criteria are satisfied.
+
+Issue comments are delta/evidence surfaces, not mandatory heartbeat logs. Do not emit unchanged per-run status comments. Closing an Issue is a lifecycle action, not a substitute for required upward failure reporting or post-adoption effect validation.
 
 ## Source-layout and cleanup safety
 
@@ -98,8 +119,8 @@ Tagging must not be used to bypass candidate review, and a failed release workfl
 
 ## Scheduler self-modification boundary
 
-Ordinary role execution does not create, delete, enable, disable, or change cadence/population of physical Scheduled Tasks merely because runtime tooling exposes those controls. Task-topology changes require explicit management authority.
+Ordinary role execution does not create, delete, enable, disable, or change cadence/population of physical Scheduled Tasks merely because the runtime exposes those controls. Task-topology changes require explicit management authority.
 
 ## Completion
 
-A material automation run ends with enough durable public-safe state for the next owner to know the exact control/candidate identity, branch/PR state, verified outcome, validation/review state, unresolved blocker, recovery/escalation state, and next owner/action. `NO_ACTION` is valid when no material current work exists.
+A material automation run ends with enough durable public-safe state for the next owner to know the exact control/candidate identity, owned Issue/PR state, branch/review/integration state, verified outcome, validation state, unresolved blocker, recovery/escalation state, and next owner/action. `NO_ACTION` is valid when no material current work exists.

@@ -10,7 +10,11 @@ Every binding:
 
 - freezes the current remote `main` exact SHA once at run start;
 - loads `AGENTS.md`, `standard/catalog.yaml`, `protocol/automation-operation`, and the role-specific canonical resources from that same snapshot;
-- restores only current public repository state needed for the selected work;
+- inspects current open Issues/PRs relevant to the role's scope before selecting new work;
+- restores explicitly routed/assigned owned Issues and their branch/PR/review/CI/dependency state before creating duplicate work;
+- continues valid unfinished owned work and, after verifying the Issue's actual acceptance/done criteria plus any required linked source-change review/integration gate, closes the owned Issue when capability and authority permit;
+- keeps a source-change Issue open while its required linked PR review/integration is unresolved unless the Issue explicitly defines a durable implementation-only handoff as completion;
+- never closes another role's Issue merely because it is related; route/handoff foreign ownership instead;
 - fails closed when this binding or any required canonical source cannot be verified;
 - never reconstructs a missing or moved path from memory, archive history, previous repository generations, old scheduler text, or another consumer;
 - treats every repository/GitHub persistence surface as public;
@@ -27,7 +31,9 @@ Load at minimum:
 - `standard/protocols/automation-operation.md`
 - `standard/checklists/pre-adoption-review.md`
 
-Restore current public candidate/review/adoption state. Integrate only an exact candidate with fresh producer-distinct `REVIEW_PASSED`, satisfied validation, no unresolved material blocker, and applicable authority. Normal integration is merge of the exact reviewed PR. Do not directly author source on `main`.
+Restore current public adoption-owned Issues plus candidate/review/adoption state. Integrate only an exact candidate with fresh producer-distinct `REVIEW_PASSED`, satisfied validation, no unresolved material blocker, and applicable authority. Normal integration is merge of the exact reviewed PR. Do not directly author source on `main`.
+
+If an adoption/release Issue is owned by the Governor, reconcile it against the resulting trusted-ref/release evidence and close it only when its acceptance criteria are actually satisfied.
 
 When release/tag authority has been explicitly delegated, the Governor may create an applicable reviewed release tag only after confirming the exact integrated commit, release version/cohort, required validation, and repository release policy. Tagging is not implied by ordinary adoption authority.
 
@@ -43,6 +49,8 @@ Load at minimum:
 
 Restore current public Issues/PRs/candidates/reviews/blockers, active topic branches, and material continuations. Reconcile ownership/dependencies/duplicate work, route the highest-value bounded control action, and ensure material child failure/recovery/blocker state remains visible upward. Do not implement source or write source files directly to `main`.
 
+The Supervisor closes only Issues it actually owns, such as resolved coordination/topology/ownership work. It must not close a Worker/Reviewer/Governor-owned Issue on that role's behalf merely because the downstream action finished; it verifies/reroutes stale ownership instead.
+
 When a non-main branch is not actively owned but contains unfinished material work, route continuation to completion/review/merge before cleanup. Delete a branch only after verifying that its material delta is integrated, superseded, or intentionally abandoned under current authority.
 
 ## worker
@@ -54,7 +62,9 @@ Load at minimum:
 - `standard/protocols/automation-operation.md`
 - `standard/checklists/agent-self-check.md`
 
-Restore one current decision-ready public work item. Implement on a topic/candidate branch, run applicable validation, freeze the exact candidate, and open/update a PR for producer-distinct review. Never write source files directly to `main`, self-review formally, or self-adopt.
+Before selecting new implementation, inspect relevant open implementation Issues and restore the current owned work item/branch/PR state. Implement one current decision-ready owned work item on a topic/candidate branch, run applicable validation, freeze the exact candidate, and open/update a PR for producer-distinct review. Never write source files directly to `main`, self-review formally, or self-adopt.
+
+When the Worker-owned Issue's acceptance criteria or repository lifecycle require downstream review/integration, leave it open with the exact handoff state until those gates are met. When its criteria and required linked integration state are fully verified within current authority, close it in the same run rather than leaving completed implementation Issues stale.
 
 ## independent-reviewer
 
@@ -65,7 +75,9 @@ Load at minimum:
 - `standard/protocols/automation-operation.md`
 - `standard/checklists/pre-adoption-review.md`
 
-Select one eligible frozen exact candidate, inspect its actual diff/effective resources and validation evidence, and persist a public-safe verdict/handoff. Do not modify candidate source, sync/rebase it, or write source files directly to `main`.
+Inspect relevant open review Issues/requests and select one eligible frozen exact candidate. Inspect its actual diff/effective resources and validation evidence, then persist a public-safe verdict/handoff. Do not modify candidate source, sync/rebase it, or write source files directly to `main`.
+
+If a review Issue/request is owned by the Reviewer, close that review work item after the exact candidate verdict and required review evidence are durably persisted. The Reviewer must not close the producer's implementation Issue; return or route that Issue to its owning role for final lifecycle reconciliation.
 
 ## Physical task bootstrap
 
