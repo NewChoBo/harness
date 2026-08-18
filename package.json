@@ -13,7 +13,7 @@
   },
   "packageManager": "pnpm@10.14.0",
   "bin": {
-    "agent-harness": "./dist/cli.js"
+    "agent-harness": "dist/cli.js"
   },
   "types": "./dist/index.d.ts",
   "exports": {
@@ -36,8 +36,8 @@
     "lint": "eslint src test",
     "lint:fix": "eslint src test --fix",
     "release:check": "npm run validate",
-    "release:publish:core": "npm publish --access public --no-git-checks",
-    "release:publish:workflows": "npm publish packages/harness-workflow-coding --access public --no-git-checks && npm publish packages/harness-workflow-novel --access public --no-git-checks && npm publish packages/harness-workflow-research --access public --no-git-checks",
+    "release:publish:core": "npm publish --access public --tag alpha",
+    "release:publish:workflows": "npm publish packages/harness-workflow-coding --access public --tag alpha && npm publish packages/harness-workflow-novel --access public --tag alpha && npm publish packages/harness-workflow-research --access public --tag alpha",
     "release:publish": "npm run release:publish:core && npm run release:publish:workflows",
     "release": "npm run release:check && npm run release:publish",
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\" \"schemas/**/*.json\" \"standard/**/*.{md,yaml}\" \"examples/**/*.{md,yaml}\" package.json \"tsconfig*.json\" vitest.config.ts",
