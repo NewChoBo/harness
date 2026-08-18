@@ -35,6 +35,7 @@
     "test": "vitest run",
     "lint": "eslint src test",
     "lint:fix": "eslint src test --fix",
+    "validate:scheduled-bindings": "node scripts/check-scheduled-task-bindings.mjs",
     "release:check": "npm run validate",
     "release:publish:core": "npm publish --access public --tag alpha",
     "release:publish:workflows": "npm --workspace @newchobo/harness-workflow-coding publish --access public --tag alpha && npm --workspace @newchobo/harness-workflow-novel publish --access public --tag alpha && npm --workspace @newchobo/harness-workflow-research publish --access public --tag alpha",
@@ -44,7 +45,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"schemas/**/*.json\" \"standard/**/*.{md,yaml}\" \"examples/**/*.{md,yaml}\" package.json \"tsconfig*.json\" vitest.config.ts",
     "format:write": "npm run format",
     "fix": "npm run lint:fix && npm run format:write",
-    "validate": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build"
+    "validate": "npm run validate:scheduled-bindings && npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
     "ajv": "^8.17.1",
