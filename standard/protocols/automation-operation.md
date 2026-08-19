@@ -4,6 +4,24 @@ Resource ID: `protocol/automation-operation`
 
 This protocol defines safe recurring or scheduled Harness execution over repository work, review, failures, branch lifecycle, and releases. Scheduler-specific cadence and physical task population remain runtime configuration, not canonical Harness policy. This protocol does not expand role authority.
 
+## Logical workflow and physical task topology
+
+Logical Harness roles, stages, and workflows are distinct from physical scheduler placement.
+
+```text
+logical role / workflow stage
+!=
+physical Scheduled Task
+```
+
+A runtime may place more than one compatible logical stage in one physical execution when doing so preserves the effective workflow contract. Physical co-location does not merge logical identities, authority, evidence, or review semantics.
+
+- A Worker stage does not become an Independent Reviewer merely because both stages can execute in one scheduler process.
+- Material Producer and Independent Reviewer separation remains mandatory. When the effective workflow requires fresh or external review isolation, physical co-location must still provide that isolation or route a handoff to a compatible execution context.
+- Runtime task-slot, concurrency, or cadence limits are observed execution constraints, not shared Harness policy and not authority grants.
+- Capacity pressure may justify reusing an existing physical task, composing compatible stages, reducing cadence, or deferring non-critical runtime work. It never justifies collapsing required independent review, skipping validation, widening authority, or treating one physical task as one universal logical owner.
+- A consumer may use several physical tasks for one logical workflow or one physical task for several compatible logical stages. The canonical workflow semantics remain provider-neutral.
+
 ## Repository-owned bootstrap
 
 A physical Scheduled Task is a thin runtime binding. A repository may project its standard role bindings at a repository-owned path such as:
@@ -13,6 +31,8 @@ A physical Scheduled Task is a thin runtime binding. A repository may project it
 ```
 
 The concrete path is repository-local configuration. Once adopted as a repository binding source, it is required metadata rather than disposable generated output; removing, relocating, or replacing it is a material automation-contract migration.
+
+Durable behavior changes are source-first. When recurring execution needs a persistent role/protocol/checklist/binding change, update and review the repository-owned canonical source first, then reconcile the physical task in place. Do not turn manager-side prompt text into a second policy store or copy the same mutable rule into several physical task prompts merely for convenience.
 
 At run start:
 
@@ -133,6 +153,10 @@ Repository desired state and manager runtime state are compared by stable task i
 - Task-manager prompt text remains a thin pointer.
 - Population/cadence changes require explicit applicable authority and normal review.
 - The task itself must not modify its own population or cadence.
+- An explicitly `PAUSED`/disabled task may be valid desired state. Do not classify an intentionally paused lane as missing or broken, recreate a replacement, or resume it unless current authority includes that transition or a previously declared resume condition is actually satisfied.
+- Runtime capacity constraints are observed facts. Prefer compatible stage composition, existing-task reuse, or lower cadence before adding physical tasks when semantics remain intact; do not use slot pressure to weaken required review, validation, or role separation.
+
+A higher control owner may inspect subordinate scheduled-run status and material results as scheduler-health evidence. However, a task's completion text, run status, or self-reported `DONE` is not proof that the underlying work is complete. Reconcile material claims against current repository/runtime evidence, including the actual Issue/PR/candidate/review/validation/integration state, before routing closure or adoption.
 
 ## Release tagging
 
