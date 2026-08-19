@@ -45,13 +45,22 @@ describe('repository-owned Scheduled Task bindings', () => {
   it('guards canonical Issue lifecycle semantics', () => {
     expectContains(protocol, [
       'Every recurring role is responsible',
-      'restore any existing owned Issue',
+      'restore existing owned Issues',
       'linked source-change review/integration gate',
       'an open linked PR normally means the Issue remains open',
       'if the Issue belongs to another role/owner, do not close',
       'a merged PR or a completion report alone is not enough',
       'required upward failure reporting',
       'post-adoption effect validation',
+    ]);
+  });
+
+  it('guards reconciliation and source-mutation budget separation', () => {
+    expectContains(protocol, [
+      'Bounded reconciliation and source-mutation budget',
+      'Passive `WAITING_*` observation does not by itself consume',
+      'at most one logical source-changing work item per run',
+      'does not authorize a full backlog sweep',
     ]);
   });
 
