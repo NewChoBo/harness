@@ -4,12 +4,16 @@ id: harness-workflow-novel
 protocols:
   - ./novel-overlay.md
   - ./narrative-surface-integrity.md
+  - ./narrative-naturalness.md
 source_gates:
   - id: exact_source_revision
     description: Recheck exact source revision before drafting/writes.
     required: true
   - id: narrative_surface_integrity
     description: Separate presentation/production metadata from story body and verify diegetic provenance plus local context continuity.
+    required: true
+  - id: narrative_naturalness
+    description: Review reader-visible over-explanation and patterned realization; material repairs require a fresh exact candidate and independent recheck.
     required: true
 metadata:
   domain: fiction
