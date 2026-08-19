@@ -1,4 +1,8 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { gunzipSync } from 'node:zlib';
 import { parse as parseYaml } from 'yaml';
 
 const packagePaths = [
@@ -24,6 +28,10 @@ const expectedNames = [
   '@newchobo/harness-workflow-novel',
   '@newchobo/harness-workflow-research',
 ];
+const workflowPackages = packages.slice(2);
+const workspaceDependency = 'workspace:^';
+const publishedDependency = `^${version}`;
+const expectedWorkspaceLink = 'link:../..';
 
 const errors = [];
 for (let index = 0; index < packages.length; index += 1) {
@@ -39,10 +47,10 @@ for (let index = 0; index < packages.length; index += 1) {
     errors.push(`${path}: repository.url must be ${repositoryUrl}`);
 }
 
-for (const { path, data } of packages.slice(2)) {
+for (const { path, data } of workflowPackages) {
   const dependency = data.dependencies?.['@newchobo/harness'];
-  if (dependency !== `^${version}`)
-    errors.push(`${path}: @newchobo/harness dependency must be ^${version}`);
+  if (dependency !== workspaceDependency)
+    errors.push(`${path}: @newchobo/harness dependency must be ${workspaceDependency}`);
 }
 
 if (root.packageManager !== 'pnpm@10.14.0')
@@ -66,6 +74,31 @@ if (workspace?.preferWorkspacePackages !== true)
 if (workspace?.saveWorkspaceProtocol !== false)
   errors.push('pnpm-workspace.yaml: saveWorkspaceProtocol must be false');
 
+let lockfile;
+try {
+  lockfile = parseYaml(readFileSync('pnpm-lock.yaml', 'utf8'));
+} catch (error) {
+  errors.push(`pnpm-lock.yaml: invalid YAML (${error.message})`);
+}
+for (const { path } of workflowPackages) {
+  const importerPath = dirname(path).replaceAll('\\', '/');
+  const dependency = lockfile?.importers?.[importerPath]?.dependencies?.['@newchobo/harness'];
+  if (dependency?.specifier !== workspaceDependency) {
+    errors.push(
+      `${importerPath}: lockfile @newchobo/harness specifier must be ${workspaceDependency}`,
+    );
+  }
+  if (dependency?.version !== expectedWorkspaceLink) {
+    errors.push(
+      `${importerPath}: lockfile @newchobo/harness version must be ${expectedWorkspaceLink}`,
+    );
+  }
+}
+if (lockfile?.packages?.[`@newchobo/harness@${version}`])
+  errors.push('pnpm-lock.yaml: synchronized @newchobo/harness must not resolve from registry');
+if (lockfile?.snapshots?.[`@newchobo/harness@${version}`])
+  errors.push('pnpm-lock.yaml: synchronized @newchobo/harness registry snapshot must be absent');
+
 const requiredFiles = [
   'standard/catalog.yaml',
   'standard/protocols/public-information-boundary.md',
@@ -86,6 +119,65 @@ for (const path of requiredFiles.filter((value) => value.endsWith('.yaml'))) {
     parseYaml(readFileSync(path, 'utf8'));
   } catch (error) {
     errors.push(`${path}: invalid YAML (${error.message})`);
+  }
+}
+
+const readTarEntry = (tarballPath, targetPath) => {
+  const archive = gunzipSync(readFileSync(tarballPath));
+  let offset = 0;
+  while (offset + 512 <= archive.length) {
+    const header = archive.subarray(offset, offset + 512);
+    if (header.every((byte) => byte === 0)) break;
+
+    const name = header.subarray(0, 100).toString('utf8').replace(/\0.*$/u, '');
+    const sizeText = header.subarray(124, 136).toString('ascii').replace(/\0.*$/u, '').trim();
+    const size = Number.parseInt(sizeText || '0', 8);
+    if (!Number.isFinite(size)) throw new Error(`invalid tar entry size for ${name}`);
+
+    const bodyOffset = offset + 512;
+    if (name === targetPath) {
+      return archive.subarray(bodyOffset, bodyOffset + size).toString('utf8');
+    }
+    offset = bodyOffset + Math.ceil(size / 512) * 512;
+  }
+  throw new Error(`tar entry ${targetPath} not found`);
+};
+
+if (errors.length === 0) {
+  const pnpmCommand = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
+  for (const { path } of workflowPackages) {
+    const packageDir = dirname(path);
+    const packDir = mkdtempSync(join(tmpdir(), 'newchobo-harness-pack-'));
+    try {
+      const result = spawnSync(pnpmCommand, ['pack', '--pack-destination', packDir], {
+        cwd: packageDir,
+        encoding: 'utf8',
+      });
+      if (result.status !== 0) {
+        errors.push(
+          `${path}: pnpm pack failed (${result.stderr.trim() || result.stdout.trim() || 'unknown error'})`,
+        );
+        continue;
+      }
+
+      const tarballs = readdirSync(packDir).filter((name) => name.endsWith('.tgz'));
+      if (tarballs.length !== 1) {
+        errors.push(`${path}: expected one packed tarball, found ${tarballs.length}`);
+        continue;
+      }
+
+      const packed = JSON.parse(readTarEntry(join(packDir, tarballs[0]), 'package/package.json'));
+      const dependency = packed.dependencies?.['@newchobo/harness'];
+      if (dependency !== publishedDependency) {
+        errors.push(
+          `${path}: packed @newchobo/harness dependency must be ${publishedDependency}, got ${dependency ?? '<missing>'}`,
+        );
+      }
+    } catch (error) {
+      errors.push(`${path}: packed manifest validation failed (${error.message})`);
+    } finally {
+      rmSync(packDir, { recursive: true, force: true });
+    }
   }
 }
 
