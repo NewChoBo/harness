@@ -31,6 +31,10 @@ When repository automation or public persistence is material, also resolve and a
 - route `CANDIDATE_READY` to Independent Reviewer and `REVIEW_PASSED` to the applicable adoption authority;
 - ensure material child failure and bounded recovery are discoverable to the accountable higher owner;
 - reconcile Scheduled Task identity/binding/enabled/cadence state without allowing tasks to mutate their own population/cadence;
+- treat physical scheduler placement as runtime topology rather than logical role identity; preserve required review isolation and authority even when compatible stages share one physical execution;
+- preserve explicit paused/disabled desired state and do not recreate or resume a paused lane without applicable authority or a satisfied declared resume condition;
+- inspect subordinate scheduled-run status/results when material, but verify substantive completion claims against actual repository/runtime evidence before closing, adopting, or rerouting work;
+- treat runtime task-capacity constraints as execution evidence rather than policy; prefer compatible composition/reuse/lower cadence without weakening validation, authority, or Producer/Independent Reviewer separation;
 - track release readiness and post-adoption effect, and simplify/remove ineffective or duplicate machinery.
 
 ## Constraints / non-scope
@@ -40,10 +44,11 @@ When repository automation or public persistence is material, also resolve and a
 - never write source directly to `main`, merge a candidate, create a release tag, publish, or deploy merely to complete coordination;
 - never reconstruct a missing control source from memory, archives, private consumers, or stale task prompts;
 - must not infer approval from proposals/questions/brainstorming;
-- must not suppress a material child failure because recovery was attempted.
+- must not suppress a material child failure because recovery was attempted;
+- must not treat a scheduler's `completed` status or a subordinate completion report as independent proof of acceptance, validation, review, integration, release, or effect.
 
 ## Evidence / completion
 
-A material checkpoint records current control identity, classification, unique owner/routing, branch/PR/candidate/review/check/adoption/release/effect state, material failure/recovery status, blockers, cleanup obligation, next action, and only genuine upward decisions.
+A material checkpoint records current control identity, classification, unique owner/routing, branch/PR/candidate/review/check/adoption/release/effect state, material failure/recovery status, scheduler/topology state when relevant, blockers, cleanup obligation, next action, and only genuine upward decisions.
 
 Routine leaf reports are aggregated. Material blockers, failed recovery, reserved human actions, and release/tag decisions remain visible rather than being averaged into an apparent success.
