@@ -19,6 +19,7 @@
     "README.md",
     "novel-overlay.md",
     "narrative-surface-integrity.md",
+    "narrative-naturalness.md",
     "preset.yaml"
   ],
   "dependencies": {
