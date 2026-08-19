@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/NewChoBo/harness/schemas/harness-catalog.schema.json",
+  "title": "NewChoBo Harness Catalog",
+  "description": "Public schema for the canonical Harness catalog representation.",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": {
+      "const": "harness.example/v1alpha1"
+    },
+    "kind": {
+      "const": "HarnessCatalog"
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "spec": {
+      "type": "object",
+      "required": ["canonicality", "resources"],
+      "properties": {
+        "canonicality": {
+          "type": "object",
+          "required": ["scope", "behaviorSource"],
+          "properties": {
+            "scope": {
+              "type": "string",
+              "minLength": 1
+            },
+            "behaviorSource": {
+              "type": "string",
+              "minLength": 1
+            },
+            "decisionRecordAuthority": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "kind", "path", "representation"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kind": {
+                "type": "string",
+                "minLength": 1
+              },
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "representation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "provenance": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

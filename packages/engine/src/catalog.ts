@@ -120,11 +120,7 @@ async function inspectCatalog(
 
   const catalog = raw as HarnessCatalog;
   issues.push(
-    ...(await validateCatalogReferences(
-      catalog,
-      rootDir,
-      options.verifyResourcePaths ?? true,
-    )),
+    ...(await validateCatalogReferences(catalog, rootDir, options.verifyResourcePaths ?? true)),
   );
 
   return {
@@ -142,7 +138,9 @@ function validateCatalogShape(value: unknown): ValidationIssue[] {
   }
 
   if (typeof value.apiVersion !== 'string' || value.apiVersion.length === 0) {
-    issues.push(issue('CATALOG_SHAPE_INVALID', '/apiVersion', 'apiVersion must be a non-empty string.'));
+    issues.push(
+      issue('CATALOG_SHAPE_INVALID', '/apiVersion', 'apiVersion must be a non-empty string.'),
+    );
   } else if (!SUPPORTED_CATALOG_API_VERSIONS.has(value.apiVersion)) {
     issues.push(
       issue(
@@ -155,8 +153,14 @@ function validateCatalogShape(value: unknown): ValidationIssue[] {
   if (value.kind !== 'HarnessCatalog') {
     issues.push(issue('CATALOG_SHAPE_INVALID', '/kind', 'kind must be HarnessCatalog.'));
   }
-  if (!isRecord(value.metadata) || typeof value.metadata.name !== 'string' || value.metadata.name.length === 0) {
-    issues.push(issue('CATALOG_SHAPE_INVALID', '/metadata/name', 'metadata.name must be a non-empty string.'));
+  if (
+    !isRecord(value.metadata) ||
+    typeof value.metadata.name !== 'string' ||
+    value.metadata.name.length === 0
+  ) {
+    issues.push(
+      issue('CATALOG_SHAPE_INVALID', '/metadata/name', 'metadata.name must be a non-empty string.'),
+    );
   }
   if (
     isRecord(value.metadata) &&
@@ -176,10 +180,21 @@ function validateCatalogShape(value: unknown): ValidationIssue[] {
     return issues;
   }
   if (!isRecord(value.spec.canonicality)) {
-    issues.push(issue('CATALOG_SHAPE_INVALID', '/spec/canonicality', 'canonicality must be an object.'));
+    issues.push(
+      issue('CATALOG_SHAPE_INVALID', '/spec/canonicality', 'canonicality must be an object.'),
+    );
   } else {
-    if (typeof value.spec.canonicality.scope !== 'string' || value.spec.canonicality.scope.length === 0) {
-      issues.push(issue('CATALOG_SHAPE_INVALID', '/spec/canonicality/scope', 'canonicality.scope must be a non-empty string.'));
+    if (
+      typeof value.spec.canonicality.scope !== 'string' ||
+      value.spec.canonicality.scope.length === 0
+    ) {
+      issues.push(
+        issue(
+          'CATALOG_SHAPE_INVALID',
+          '/spec/canonicality/scope',
+          'canonicality.scope must be a non-empty string.',
+        ),
+      );
     }
     if (
       typeof value.spec.canonicality.behaviorSource !== 'string' ||
@@ -234,15 +249,21 @@ function validateCatalogShape(value: unknown): ValidationIssue[] {
       const fieldValue = resource[field];
       if (typeof fieldValue !== 'string' || fieldValue.length === 0) {
         issues.push(
-          issue('CATALOG_SHAPE_INVALID', `${path}/${field}`, `${field} must be a non-empty string.`),
+          issue(
+            'CATALOG_SHAPE_INVALID',
+            `${path}/${field}`,
+            `${field} must be a non-empty string.`,
+          ),
         );
       }
     }
     const provenance = resource.provenance;
     if (
       provenance !== undefined &&
-      !(typeof provenance === 'string' ||
-        (Array.isArray(provenance) && provenance.every((item) => typeof item === 'string')))
+      !(
+        typeof provenance === 'string' ||
+        (Array.isArray(provenance) && provenance.every((item) => typeof item === 'string'))
+      )
     ) {
       issues.push(
         issue(

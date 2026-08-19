@@ -3,78 +3,194 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
-  release:
-    types:
-      - published
+      - 'v[0-9]*'
+      - '[0-9]*'
   workflow_dispatch:
     inputs:
-      tag_name:
-        description: 'Tag name to publish (e.g. v0.1.0-alpha.1). Used for manual triggers.'
-        required: false
+      tag:
+        description: Existing SemVer tag to resume or verify
+        required: true
+        type: string
 
 permissions:
-  contents: read
+  contents: write
   id-token: write
+
+concurrency:
+  group: release-${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+  cancel-in-progress: false
 
 jobs:
   release:
-    name: Publish npm packages
+    name: Publish packages and create GitHub Release
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+          lfs: true
+      - uses: pnpm/action-setup@v6
         with:
-          node-version: 22
-          registry-url: 'https://registry.npmjs.org'
-          cache: 'npm'
-      - run: npm install --ignore-scripts --no-audit --no-fund
-      - run: npm run release:check
+          version: 10.14.0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.14.0
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: Resolve and verify release tag
+        id: release
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Resolve release metadata
-        id: publish_meta
+          DISPATCH_TAG: ${{ inputs.tag }}
         run: |
-          if [ "${{ github.event_name }}" = "release" ]; then
-            TAG_NAME="${{ github.event.release.tag_name }}"
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            TAG_NAME="${{ github.event.inputs.tag_name }}"
-          else
-            TAG_NAME="${{ github.ref_name }}"
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            TAG="${DISPATCH_TAG}"
           fi
-          if [ -z "$TAG_NAME" ]; then
-            echo "No tag name resolved." >&2
+
+          VERSION="${TAG#v}"
+          TAG="${TAG}" VERSION="${VERSION}" node --input-type=module <<'NODE'
+          const { TAG: tag, VERSION: version } = process.env;
+          const semver = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$/;
+          if (!tag || !version || !/^v?[0-9]/.test(tag) || !semver.test(version)) {
+            console.error(`invalid SemVer tag: ${tag ?? ''}`);
+            process.exit(1);
+          }
+          NODE
+
+          git fetch origin main --tags --force
+          TAG_SHA="$(git rev-parse "${TAG}^{commit}")"
+          if ! git merge-base --is-ancestor "${TAG_SHA}" origin/main; then
+            echo "release tag must point to a commit retained in main history: ${TAG_SHA}" >&2
             exit 1
           fi
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          TAG_VERSION="${TAG_NAME#v}"
-          echo "Resolved release tag: $TAG_NAME"
-          if [ "$PACKAGE_VERSION" != "$TAG_VERSION" ]; then
-            echo "Tag version ($TAG_VERSION) does not match package version ($PACKAGE_VERSION)."
-            echo "Update package.json version before creating the tag."
+
+          git checkout --detach "${TAG_SHA}"
+          if [[ "$(git rev-parse HEAD)" != "${TAG_SHA}" ]]; then
+            echo "release worktree is not bound to resolved tag source ${TAG_SHA}" >&2
             exit 1
           fi
-          echo "package_version=$PACKAGE_VERSION" >> "$GITHUB_OUTPUT"
-          echo "tag_version=$TAG_VERSION" >> "$GITHUB_OUTPUT"
-          if [[ "$TAG_VERSION" == *-alpha.* || "$TAG_VERSION" == *-beta.* || "$TAG_VERSION" == *-rc.* ]]; then
-            echo "dist_tag=alpha" >> "$GITHUB_OUTPUT"
-          else
-            echo "dist_tag=latest" >> "$GITHUB_OUTPUT"
+
+          PRERELEASE=false
+          VERSION_WITHOUT_BUILD="${VERSION%%+*}"
+          if [[ "${VERSION_WITHOUT_BUILD}" == *-* ]]; then
+            PRERELEASE=true
           fi
-      - name: Publish core package
-        run: npm publish --access public --tag ${{ steps.publish_meta.outputs.dist_tag }}
+
+          case "${VERSION_WITHOUT_BUILD}" in
+            *-alpha*) DIST_TAG=alpha ;;
+            *-beta*) DIST_TAG=beta ;;
+            *-rc*) DIST_TAG=next ;;
+            *-*) DIST_TAG=next ;;
+            *) DIST_TAG=latest ;;
+          esac
+
+          echo "tag=${TAG}" >> "${GITHUB_OUTPUT}"
+          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
+          echo "sha=${TAG_SHA}" >> "${GITHUB_OUTPUT}"
+          echo "dist_tag=${DIST_TAG}" >> "${GITHUB_OUTPUT}"
+          echo "prerelease=${PRERELEASE}" >> "${GITHUB_OUTPUT}"
+      - name: Use npm with Trusted Publishing support
+        run: npm install --global npm@11.5.1
+      - name: Install frozen workspace from verified tag
+        run: pnpm install --frozen-lockfile
+      - name: Validate exact release source
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Publish workflow overlays
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+          RELEASE_SHA: ${{ steps.release.outputs.sha }}
         run: |
-          npm --workspace @newchobo/harness-workflow-coding publish --access public --tag ${{ steps.publish_meta.outputs.dist_tag }}
-          npm --workspace @newchobo/harness-workflow-novel publish --access public --tag ${{ steps.publish_meta.outputs.dist_tag }}
-          npm --workspace @newchobo/harness-workflow-research publish --access public --tag ${{ steps.publish_meta.outputs.dist_tag }}
+          set -euo pipefail
+          if [[ "$(git rev-parse HEAD)" != "${RELEASE_SHA}" ]]; then
+            echo "release worktree drifted from ${RELEASE_SHA}" >&2
+            exit 1
+          fi
+          pnpm release:check
+          pnpm --filter @newchobo/harness-core validate
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const version = process.env.RELEASE_VERSION;
+          const paths = [
+            'package.json',
+            'packages/engine/package.json',
+            'packages/harness-workflow-coding/package.json',
+            'packages/harness-workflow-novel/package.json',
+            'packages/harness-workflow-research/package.json',
+          ];
+          for (const path of paths) {
+            const pkg = JSON.parse(readFileSync(path, 'utf8'));
+            if (pkg.version !== version) throw new Error(`${path}: ${pkg.version} != tag ${version}`);
+            if (pkg.repository?.url !== 'https://github.com/NewChoBo/harness.git') {
+              throw new Error(`${path}: repository.url must match the trusted publisher repository`);
+            }
+          }
+          NODE
+      - name: Inspect publishable package contents
+        run: |
+          set -euo pipefail
+          npm pack --dry-run --json
+          npm pack ./packages/engine --dry-run --json
+          npm pack ./packages/harness-workflow-coding --dry-run --json
+          npm pack ./packages/harness-workflow-novel --dry-run --json
+          npm pack ./packages/harness-workflow-research --dry-run --json
+      - name: Publish missing npm package versions
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+          DIST_TAG: ${{ steps.release.outputs.dist_tag }}
+        run: |
+          set -euo pipefail
+          publish_if_missing() {
+            local directory="$1"
+            local target="."
+            local manifest="package.json"
+            if [[ -n "${directory}" ]]; then
+              target="./${directory}"
+              manifest="${directory}/package.json"
+            fi
+
+            local name
+            name="$(node -p "require('./${manifest}').name")"
+            if npm view "${name}@${RELEASE_VERSION}" version >/dev/null 2>&1; then
+              echo "${name}@${RELEASE_VERSION} already exists; skipping"
+              return 0
+            fi
+            npm publish "${target}" --access public --tag "${DIST_TAG}"
+          }
+
+          publish_if_missing ""
+          publish_if_missing "packages/engine"
+          publish_if_missing "packages/harness-workflow-coding"
+          publish_if_missing "packages/harness-workflow-novel"
+          publish_if_missing "packages/harness-workflow-research"
+      - name: Create or verify GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.release.outputs.tag }}
+          PRERELEASE: ${{ steps.release.outputs.prerelease }}
+        run: |
+          set -euo pipefail
+          if gh release view "${TAG}" >/dev/null 2>&1; then
+            RELEASE_JSON="$(gh release view "${TAG}" --json isDraft,isPrerelease,publishedAt)"
+            ACTUAL_DRAFT="$(jq -r '.isDraft' <<<"${RELEASE_JSON}")"
+            ACTUAL_PRERELEASE="$(jq -r '.isPrerelease' <<<"${RELEASE_JSON}")"
+            PUBLISHED_AT="$(jq -r '.publishedAt // empty' <<<"${RELEASE_JSON}")"
+            if [[ "${ACTUAL_DRAFT}" != "false" || -z "${PUBLISHED_AT}" ]]; then
+              echo "RELEASE_DRAFT_BLOCKED: ${TAG} exists but is not a published GitHub Release" >&2
+              exit 1
+            fi
+            if [[ "${ACTUAL_PRERELEASE}" != "${PRERELEASE}" ]]; then
+              echo "existing GitHub Release prerelease state does not match ${TAG}" >&2
+              exit 1
+            fi
+            echo "Published GitHub Release ${TAG} already exists"
+            exit 0
+          fi
+
+          RELEASE_ARGS=(--verify-tag --generate-notes --title "${TAG}")
+          if [[ "${PRERELEASE}" == "true" ]]; then
+            RELEASE_ARGS+=(--prerelease --latest=false)
+          else
+            RELEASE_ARGS+=(--latest)
+          fi
+          gh release create "${TAG}" "${RELEASE_ARGS[@]}"

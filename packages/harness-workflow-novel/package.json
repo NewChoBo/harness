@@ -21,6 +21,6 @@
     "preset.yaml"
   ],
   "dependencies": {
-    "@newchobo/harness": "^0.1.0-alpha.0"
+    "@newchobo/harness": "workspace:^"
   }
 }

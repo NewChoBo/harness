@@ -5,11 +5,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 
-import {
-  HarnessError,
-  resolveCatalogResources,
-  validateCatalogFile,
-} from '../src/index.js';
+import { HarnessError, resolveCatalogResources, validateCatalogFile } from '../src/index.js';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 
@@ -35,7 +31,10 @@ test('resolves requested resource ids deterministically with provenance', async 
 
 test('rejects a canonical resource path that lexically escapes the configured root', async () => {
   await withTempRoot(async (root) => {
-    await writeFile(join(root, 'catalog.yaml'), catalogYaml([{ id: 'role/x', path: '../outside.md' }]));
+    await writeFile(
+      join(root, 'catalog.yaml'),
+      catalogYaml([{ id: 'role/x', path: '../outside.md' }]),
+    );
     const issues = await validateCatalogFile('catalog.yaml', { rootDir: root });
     assert.ok(issues.some((item) => item.code === 'PATH_ESCAPE'));
   });
@@ -90,7 +89,10 @@ test(
 
 test('allows a missing resource path when missing-path reporting is disabled', async () => {
   await withTempRoot(async (root) => {
-    await writeFile(join(root, 'catalog.yaml'), catalogYaml([{ id: 'role/x', path: 'missing.md' }]));
+    await writeFile(
+      join(root, 'catalog.yaml'),
+      catalogYaml([{ id: 'role/x', path: 'missing.md' }]),
+    );
     const issues = await validateCatalogFile('catalog.yaml', {
       rootDir: root,
       verifyResourcePaths: false,
@@ -143,7 +145,10 @@ test('reports duplicate catalog resource ids', async () => {
 
 test('reports a missing canonical resource path', async () => {
   await withTempRoot(async (root) => {
-    await writeFile(join(root, 'catalog.yaml'), catalogYaml([{ id: 'role/x', path: 'missing.md' }]));
+    await writeFile(
+      join(root, 'catalog.yaml'),
+      catalogYaml([{ id: 'role/x', path: 'missing.md' }]),
+    );
     const issues = await validateCatalogFile('catalog.yaml', { rootDir: root });
     assert.ok(issues.some((item) => item.code === 'RESOURCE_PATH_NOT_FOUND'));
   });
