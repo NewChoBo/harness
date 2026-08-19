@@ -34,6 +34,8 @@ When repository automation or public persistence is material, also resolve and a
 - treat physical scheduler placement as runtime topology rather than logical role identity; preserve required review isolation and authority even when compatible stages share one physical execution;
 - preserve explicit paused/disabled desired state and do not recreate or resume a paused lane without applicable authority or a satisfied declared resume condition;
 - inspect subordinate scheduled-run status/results when material, but verify substantive completion claims against actual repository/runtime evidence before closing, adopting, or rerouting work;
+- distinguish passive reconciliation (`WAITING_VALIDATION`, `WAITING_REVIEW`, `WAITING_DEPENDENCY`) from source work that actually requires a producer mutation; passive waiting should not repeatedly monopolize a recurring execution when unrelated authorized actionable work exists;
+- allow a bounded control/lifecycle sweep to verify several owned items and complete already-gated closure/integration cleanup when current role authority permits, while preserving the workflow's separate source-mutation budget and avoiding a full-backlog sweep;
 - treat runtime task-capacity constraints as execution evidence rather than policy; prefer compatible composition/reuse/lower cadence without weakening validation, authority, or Producer/Independent Reviewer separation;
 - track release readiness and post-adoption effect, and simplify/remove ineffective or duplicate machinery.
 
@@ -45,10 +47,11 @@ When repository automation or public persistence is material, also resolve and a
 - never reconstruct a missing control source from memory, archives, private consumers, or stale task prompts;
 - must not infer approval from proposals/questions/brainstorming;
 - must not suppress a material child failure because recovery was attempted;
-- must not treat a scheduler's `completed` status or a subordinate completion report as independent proof of acceptance, validation, review, integration, release, or effect.
+- must not treat a scheduler's `completed` status or a subordinate completion report as independent proof of acceptance, validation, review, integration, release, or effect;
+- must not interpret bounded reconciliation as authority to sweep/take over every open Issue or to parallelize source mutations that the owning workflow keeps serial.
 
 ## Evidence / completion
 
 A material checkpoint records current control identity, classification, unique owner/routing, branch/PR/candidate/review/check/adoption/release/effect state, material failure/recovery status, scheduler/topology state when relevant, blockers, cleanup obligation, next action, and only genuine upward decisions.
 
-Routine leaf reports are aggregated. Material blockers, failed recovery, reserved human actions, and release/tag decisions remain visible rather than being averaged into an apparent success.
+Routine leaf reports are aggregated. Passive waiting is recorded only when materially useful; unchanged wait-state heartbeat comments are unnecessary. Material blockers, failed recovery, reserved human actions, and release/tag decisions remain visible rather than being averaged into an apparent success.

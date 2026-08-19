@@ -47,25 +47,56 @@ If the configured binding or required canonical source is missing, unreadable, m
 
 **Missing control source is never permission to reconstruct, restore, delete-and-recreate, or replace it from conversational memory, archive history, an earlier repository generation, old Scheduled Task text, another consumer, or a stale branch.**
 
-## One material action
+## Bounded reconciliation and source-mutation budget
 
-Each run selects at most one highest-value material action. `NO_ACTION` is valid. Recurring schedules are not work-generation quotas.
+Recurring execution distinguishes control/lifecycle reconciliation from source mutation.
 
-Restore current Issues, PRs, branches, reviews, checks, release state, continuations, failures, and dependencies before selection. Live state overrides stale checkpoints.
+```text
+bounded control/lifecycle reconciliation
++
+default: at most one logical source-changing work item
+```
+
+The default one-item limit applies to **source mutation**, not to every read-only observation or already-gated lifecycle transition.
+
+A run may inspect a bounded set of currently owned work items to prevent passive waiting from monopolizing recurring execution. Descriptive reconciliation outcomes may include:
+
+- `ACTION_REQUIRED` — the current owner needs an actual source-producing action;
+- `READY_TO_INTEGRATE` — required current gates are satisfied and the applicable authority may integrate/close/clean up;
+- `WAITING_VALIDATION` — external/current validation is still pending;
+- `WAITING_REVIEW` — required independent review is still pending;
+- `WAITING_DEPENDENCY` — a real prerequisite is still pending;
+- `BLOCKED` — action cannot continue without a material capability/authority/failure resolution;
+- `DONE` — actual acceptance/integration conditions are verified.
+
+These are reconciliation descriptions, not a competing global lifecycle state machine.
+
+Rules:
+
+- Passive `WAITING_*` observation does not by itself consume the run's source-mutation budget and should not require an unchanged heartbeat comment.
+- When an item is already fully gated, an authorized role may complete the applicable integration, closure, or cleanup transition in the same run without manufacturing another source-change item.
+- Existing owned `ACTION_REQUIRED` work remains preferred over starting a competing duplicate.
+- If no owned work requires source mutation, a workflow may select another authorized actionable item according to its repository-local priority policy.
+- The shared default remains at most one logical source-changing work item per run unless an explicitly adopted workflow defines a different safe budget.
+- This section does not authorize a full backlog sweep, parallel edits, branch proliferation, self-review, weaker validation, release/publication bypass, or takeover of another owner.
+- `NO_ACTION` remains valid. Recurring schedules are not work-generation quotas.
+
+Live state overrides stale checkpoints.
 
 ## Role-owned Issue lifecycle
 
 Every recurring role is responsible for the lifecycle of Issues that are genuinely inside that role's current scope/ownership. This is scoped ticket awareness, not a requirement for every role to sweep the entire repository backlog.
 
-At each run, before selecting new work:
+At each run, before selecting new source work:
 
 1. inspect current open Issues and PRs relevant to the role's scope, including explicitly assigned/routed work and durable handoffs;
-2. restore any existing owned Issue before creating a duplicate work item;
-3. reconcile the Issue against current branch/PR/review/CI/integration/effect evidence;
+2. restore existing owned Issues before creating duplicate work items;
+3. reconcile them against current branch/PR/review/CI/integration/effect evidence;
 4. continue or recover owned unfinished work when it remains valid and actionable;
-5. when the Issue's current done/acceptance criteria are verified **and every required linked source-change review/integration gate for that Issue is satisfied**, persist only useful completion evidence and close the owned Issue in the same run when capability and authority permit;
-6. when an owned Issue is duplicate, superseded, or no longer required, close it only after identifying the current replacement/evidence and when that disposition is within role authority;
-7. if the Issue belongs to another role/owner, do not close or silently take it over—route/handoff it to the proper owner and preserve the dependency/blocker relation.
+5. do not let passive waiting on one owned item prevent unrelated authorized actionable work when the workflow permits the bounded reconciliation/source-budget model above;
+6. when the Issue's current done/acceptance criteria are verified **and every required linked source-change review/integration gate for that Issue is satisfied**, persist only useful completion evidence and close the owned Issue in the same run when capability and authority permit;
+7. when an owned Issue is duplicate, superseded, or no longer required, close it only after identifying the current replacement/evidence and when that disposition is within role authority;
+8. if the Issue belongs to another role/owner, do not close or silently take it over—route/handoff it to the proper owner and preserve the dependency/blocker relation.
 
 For a source-change Issue, an open linked PR normally means the Issue remains open while required review/integration is unresolved. A repository may define an explicit implementation-only Issue whose done state is a durable handoff to another owned work item, but that handoff must be explicit; do not infer it merely because a producer finished coding.
 
