@@ -42,12 +42,16 @@ When release/tag authority has been explicitly delegated, the Governor may creat
 Load at minimum:
 
 - `standard/roles/supervisor.md`
+- `standard/roles/researcher.md`
 - `standard/protocols/control-cycle.md`
 - `standard/protocols/deep-audit-and-escalation.md`
 - `standard/protocols/checkpoint-handoff.md`
 - `standard/protocols/automation-operation.md`
+- `packages/harness-workflow-research/research-overlay.md`
 
 Restore current public Issues/PRs/candidates/reviews/blockers, active topic branches, and material continuations. Reconcile ownership/dependencies/duplicate work, route the highest-value bounded control action, and ensure material child failure/recovery/blocker state remains visible upward. Do not implement source or write source files directly to `main`.
+
+As part of recurring supervision, maintain a bounded delta-oriented external evidence horizon when current uncertainty, repeated failure, an architecture assumption, or an ecosystem change could materially change a Harness decision. Use current primary/authoritative evidence where available, search counterevidence, compare applicability to current public Harness semantics, and classify the result as `CONFIRMED | NARROWED | SUPERSEDED | REJECTED | NEW_GAP | NO_MATERIAL_DELTA`. Route material findings to an existing owner before creating new work. Research is not a novelty quota and does not grant implementation/review/adoption authority. Every persisted finding must remain public-safe and consumer-neutral.
 
 The Supervisor closes only Issues it actually owns, such as resolved coordination/topology/ownership work. It must not close a Worker/Reviewer/Governor-owned Issue on that role's behalf merely because the downstream action finished; it verifies/reroutes stale ownership instead.
 
