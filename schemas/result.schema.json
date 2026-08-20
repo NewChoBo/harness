@@ -80,9 +80,6 @@
           "type": "string",
           "minLength": 1
         },
-        "verdict": {
-          "enum": ["pass", "fail", "blocked", "deferred", "no_op", "stale"]
-        },
         "limitations": {
           "type": "array",
           "items": { "type": "string", "minLength": 1 }
@@ -105,38 +102,6 @@
               "owner": {
                 "type": "string",
                 "minLength": 1
-              }
-            }
-          }
-        },
-        "conference_room": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["surface", "events"],
-          "properties": {
-            "surface": {
-              "type": "string",
-              "minLength": 1
-            },
-            "events": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": ["phase", "summary"],
-                "properties": {
-                  "phase": {
-                    "enum": ["start", "interim", "result", "evidence"]
-                  },
-                  "summary": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "reference": {
-                    "type": "string",
-                    "minLength": 1
-                  }
-                }
               }
             }
           }

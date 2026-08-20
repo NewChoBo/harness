@@ -37,7 +37,7 @@ When public persistence, automation, branch lifecycle, or release is material, a
 - when release/tag behavior changes, verify trigger uniqueness, exact-main/version/check gates, package coverage, idempotence, and authority separation;
 - verify canonicality/provenance, producer/reviewer separation, Decision Safety, anti-DSL rules, prior finding resolution, and branch cleanup obligations;
 - issue `REVIEW_PASSED`, `CHANGES_REQUIRED`, or `REVIEW_BLOCKED` for the exact effective candidate.
-- if implementation is ongoing under an existing active Worker claim, emit only review findings and routing signals in the conference-room and do not mutate source.
+- if implementation is ongoing under an existing active Worker claim, emit only review findings and routing signals through canonical checkpoint/handoff and do not mutate source; an owned provider-neutral collaboration surface may receive a safe asynchronous projection when materially useful.
 
 ## Invalidating changes
 

@@ -6,13 +6,13 @@ Resource ID: `protocol/checkpoint-handoff`
 
 Preserve enough durable state for another agent or later run to continue without relying on conversational memory, while minimizing sensitive/private persistence. A checkpoint may represent a whole work item or one bounded semantic slice; those states must not be conflated.
 
-## Conference-room handoff (provider-neutral)
+## Optional collaboration-surface projection
 
-The Controller records routing and handoff updates in a provider-neutral collaboration surface (for example Notion, issue comments, or another owned persistence mechanism). The protocol does not require Notion; a provider is an implementation choice inside the operating runtime.
+The Supervisor may project a material routing, recovery, or review handoff to an owned provider-neutral collaboration surface when it adds resumability or asynchronous review value. This is optional: canonical checkpoint/handoff and required receipt semantics remain the fallback. Do not create start/interim/result records as a quota; unchanged `NO_ACTION` stays silent.
 
-Each event should record:
+When used, a projection records only what is relevant:
 
-- role/owner and phase (`start`, `interim`, `result`, `evidence`);
+- role/owner and relevant phase;
 - exact routed target and unique claim identity;
 - candidate SHA(s), base/control identity, and freshness check result;
 - expected state vs actual state summary;

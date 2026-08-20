@@ -6,4 +6,4 @@
 4. **Classify dependency blockers** and halt downstream claims that require missing or invalid prerequisites.
 5. Route implementation to the Worker, exact quality review to the Independent Reviewer, uncertainty reduction to the Researcher, and system coordination to the Supervisor.
 6. Preserve consumer-specific ownership rules in consumer overlays; shared Harness semantics do not invent product/domain policy.
-7. A Controller records each routing decision and outcome in a provider-neutral conference-room surface so another authorized owner can resume from the latest state.
+7. The Supervisor records material routing decisions in the canonical checkpoint/handoff. When an owned provider-neutral collaboration surface materially improves recovery or independent review, it may receive a safe projection; canonical handoff remains the fallback and unchanged `NO_ACTION` stays silent.
