@@ -3,16 +3,6 @@ name: Engine Validate
 on:
   pull_request:
     branches: [main]
-    paths:
-      - package.json
-      - pnpm-lock.yaml
-      - pnpm-workspace.yaml
-      - packages/engine/**
-      - schemas/**
-      - standard/catalog.yaml
-      - scripts/validate-workspace-packages.mjs
-      - scripts/check-public-boundary.mjs
-      - .github/workflows/engine.yml
   push:
     branches:
       - main
