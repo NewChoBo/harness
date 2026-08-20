@@ -6,6 +6,19 @@ Resource ID: `protocol/checkpoint-handoff`
 
 Preserve enough durable state for another agent or later run to continue without relying on conversational memory, while minimizing sensitive/private persistence. A checkpoint may represent a whole work item or one bounded semantic slice; those states must not be conflated.
 
+## Conference-room handoff (provider-neutral)
+
+The Controller records routing and handoff updates in a provider-neutral collaboration surface (for example Notion, issue comments, or another owned persistence mechanism). The protocol does not require Notion; a provider is an implementation choice inside the operating runtime.
+
+Each event should record:
+
+- role/owner and phase (`start`, `interim`, `result`, `evidence`);
+- exact routed target and unique claim identity;
+- candidate SHA(s), base/control identity, and freshness check result;
+- expected state vs actual state summary;
+- validation/blocker status and residual work;
+- safe artifact references (no secrets, private consumer names, personal data, or raw private evidence).
+
 `protocol/execution-outcome-receipt` owns the shared semantic fields and truthfulness rules for compact material run-outcome receipts. This protocol owns **when/how that outcome is persisted or handed off resumably**. Do not maintain a second competing receipt field definition here.
 
 ## Material checkpoint fields
@@ -24,6 +37,7 @@ Use only what is relevant:
 - next action or next slice and next owner;
 - unresolved upward decision, if any;
 - exact `ExecutionOutcomeReceipt` identity/reference when the governing workflow/effect owner requires one.
+- stale-review invalidation signal when a prior review applies to a different candidate SHA or changed effective composition.
 
 ## Execution outcome receipt integration
 
@@ -70,6 +84,8 @@ When an outcome receipt is required for the same stop, use `CLOCK_UNAVAILABLE` /
 - an outcome/canary receipt transfers evidence only, never authority or reviewer independence;
 - do not credit a receipt to a named adopted change when the exact consumed Harness subject is pre-change, non-containing, stale, or otherwise not applicable; wall-clock ordering alone is not subject/currentness proof;
 - avoid repetitive no-change comments when durable state is unchanged, except that the first successful selected migration/effect canary must persist its one bounded outcome receipt when required by the effect owner.
+- do not persist a stale review verdict for a changed candidate/control/effective composition as final; surface `stale_review` and require re-review when identity changed.
+- when durable persistence is unavailable, the same bounded handoff fields are emitted in a temporary handoff packet with explicit persistence limitation and next owner.
 
 ## Outcome receipt idempotency
 

@@ -10,6 +10,7 @@
 - Rebuild validation sequence (typecheck + tests + lint/format gate) before handoff.
 - Keep each decision-ready change scoped to a single concrete intent.
 - Keep private/private-control policy in repository overlays, not this shared package.
+- Preserve asynchronous review coordination by recording Controller routing, worker progress, and review/evidence snapshots in a provider-neutral collaboration room.
 
 ## Suggested source gates
 

@@ -25,6 +25,7 @@ When public persistence or recurring repository automation is material, also res
 - recheck freshness, ownership, dependencies, and existing work before material writes;
 - restore one valid existing branch/PR before opening a duplicate;
 - implement only the routed scope on one short-lived topic branch;
+- do not claim active implementation ownership if an in-flight same-target worker claim exists;
 - keep private/consumer-specific policy and evidence out of shared public resources;
 - run applicable validation and Agent Self-Check;
 - freeze an effective `CANDIDATE_READY` identity including base/profile/overlay provenance when relevant;
