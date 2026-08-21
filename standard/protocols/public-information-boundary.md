@@ -11,7 +11,7 @@ Assume anything written to a public surface can become immediately world-readabl
 Public surfaces include:
 
 - source, documentation, examples, fixtures, snapshots, generated outputs, and package metadata;
-- commit author metadata/messages and branch/tag names;
+- commit author/committer metadata/messages and branch/tag names;
 - Issues, Pull Requests, reviews, comments, labels, milestones, and public project metadata;
 - workflow logs, artifacts, summaries, releases, release assets, registries, and generated documentation.
 
@@ -22,10 +22,12 @@ If information is not clearly safe for public disclosure, do not write it public
 Use only the distinction needed for persistence:
 
 - `PUBLIC_SAFE` — intentionally public and reusable.
-- `NON_PUBLIC` — secrets, personal/sensitive data, private consumer/project/customer/domain information, private coordinates, private evidence, internal state, or unpublished material.
+- `NON_PUBLIC` — secrets, personal/sensitive data not explicitly authorized for public disclosure, private consumer/project/customer/domain information, private coordinates, private evidence, internal state, or unpublished material.
 - `UNKNOWN` — current evidence cannot establish public safety.
 
 `UNKNOWN` is fail-closed and is treated like `NON_PUBLIC` for persistence. This is a write gate, not a general data-classification language.
+
+Disclosure status is contextual and evidence-backed. Repository-owner Git author/committer metadata may be `PUBLIC_SAFE` when the owner explicitly authorizes that exact identity for public repositories. That authorization does not generalize to third-party identities, other personal data, secrets, private material, or unknown identifiers, and must not be inferred merely because an identity already appears in public history.
 
 Do not commit confidential denylists or inventories of private identities to enforce this protocol. Private environments may run additional local checks that never become public artifacts.
 
@@ -105,4 +107,14 @@ Use layered validation:
 - public secret/static/path checks;
 - private local checks for confidential identifiers that must not be committed.
 
-A scanner is defense in depth. A green scanner does not prove public safety.
+### Automated tracked-file scope
+
+`scripts/check-public-boundary.mjs` checks the current tracked repository file paths and readable file payloads returned by `git ls-files`. It detects only the filename, path, LFS-pointer, and text-pattern classes implemented by that script.
+
+The tracked-file check does **not** inspect or attest commit/ref metadata, Issues/PRs/reviews/comments/project metadata, workflow logs/artifacts, releases/assets, registries, caches/forks/mirrors, or host/account state. Those public surfaces require surface-appropriate evidence, for example:
+
+- raw Git/GitHub metadata inspection for commit/ref identity and provenance when material;
+- exact host API/UI, workflow, release, registry, or artifact evidence plus review for collaboration and publication surfaces;
+- private/host-local checks for confidential identifier sets or sensitive detection inputs that must not be committed publicly.
+
+A green tracked-file scanner means only that its implemented tracked-file checks passed. It is defense in depth, not whole-surface disclosure proof.

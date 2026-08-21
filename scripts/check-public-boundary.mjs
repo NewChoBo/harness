@@ -67,4 +67,6 @@ if (violations.length > 0) {
   process.exit(1);
 }
 
-console.log(`Public information boundary check passed for ${files.length} tracked files.`);
+console.log(
+  `Tracked-file public boundary check passed for ${files.length} tracked files; non-file public surfaces require separate evidence.`,
+);
