@@ -39,7 +39,8 @@ describe('public information boundary script', () => {
     const result = runBoundaryCheck({ 'README.md': '# Public example\n' });
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain('Public information boundary check passed');
+    expect(result.stdout).toContain('Tracked-file public boundary check passed');
+    expect(result.stdout).toContain('non-file public surfaces require separate evidence');
   });
 
   it('fails closed when a tracked Git LFS pointer is not hydrated', () => {
