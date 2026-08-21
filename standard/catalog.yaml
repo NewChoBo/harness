@@ -113,6 +113,11 @@ spec:
       path: standard/protocols/execution-outcome-receipt.md
       representation: narrative
       provenance: docs/decisions/0010-bounded-execution-outcome-receipts.md
+    - id: protocol/local-agent-orchestration
+      kind: Protocol
+      path: standard/protocols/local-agent-orchestration.md
+      representation: narrative
+      provenance: docs/decisions/0016-local-agent-root-orchestration.md
     - id: profile/execution-depth
       kind: Profile
       path: standard/profiles/execution-depth.md
@@ -123,6 +128,16 @@ spec:
       path: standard/profiles/decision-autonomy.md
       representation: narrative
       provenance: docs/decisions/0011-selectable-decision-autonomy.md
+    - id: profile/codex-local
+      kind: Profile
+      path: standard/profiles/codex-local.md
+      representation: narrative
+      provenance: docs/decisions/0016-local-agent-root-orchestration.md
+    - id: profile/claude-code
+      kind: Profile
+      path: standard/profiles/claude-code.md
+      representation: narrative
+      provenance: docs/decisions/0016-local-agent-root-orchestration.md
     - id: protocol/translation-localization
       kind: Protocol
       path: standard/protocols/translation-localization.md
