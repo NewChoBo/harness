@@ -3,7 +3,7 @@
 ## Intent
 
 - Keep repository-specific implementation policy local.
-- Preserve shared control semantics from `@newchobo/harness-core`.
+- Preserve shared control semantics from `@newchobo/harness`.
 
 ## Recommended defaults
 
