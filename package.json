@@ -2,7 +2,7 @@
   "name": "@newchobo/harness",
   "private": false,
   "version": "0.1.0-alpha.0",
-  "description": "Reusable agent workflow harness core and public workflow overlays",
+  "description": "직접 일하기 귀찮은 모두를 위해 — reusable agent workflow harness core and public workflow overlays",
   "workspaces": [
     "packages/*"
   ],
