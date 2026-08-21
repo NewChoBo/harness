@@ -31,7 +31,8 @@ current decision / assumption / recurring failure
 ```
 
 The canonical result vocabulary and silent no-delta behavior are defined by
-`role/researcher`; this overlay composes that behavior rather than replacing it.
+`role/researcher`. This overlay reuses that vocabulary as research guidance; selecting
+this overlay does not by itself select or require `role/researcher` as the effective role.
 Before inventing a reusable abstraction, proportionally inspect mature products,
 standards/protocols, current official documentation, strong open-source
 implementations, primary research, and credible production evidence that could
