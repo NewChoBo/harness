@@ -4,6 +4,10 @@ NewChoBo Harness is developed publicly. Treat source files, commit messages, bra
 
 If information is not clearly safe for public disclosure, do not post it here. Use synthetic/minimized reproductions and keep private evidence in its authorized private source. The canonical rule is [`protocol/public-information-boundary`](standard/protocols/public-information-boundary.md).
 
+## Licensing of contributions
+
+By submitting a contribution to this repository, you agree that your contribution is provided under the project's MIT License. This does not transfer ownership of your original contribution; it establishes the license under which the contribution is accepted and redistributed as part of NewChoBo Harness.
+
 ## Change flow
 
 Material changes follow:
