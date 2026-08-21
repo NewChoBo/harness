@@ -1,5 +1,7 @@
 # NewChoBo Harness
 
+> 직접 일하기 귀찮은 모두를 위해
+
 NewChoBo Harness is a public, provider-neutral agent/workflow governance and control-plane system. It combines reusable semantic roles/protocols/checklists with a TypeScript reference engine, public workflow packages, repository-owned automation bindings, and exact-candidate review/adoption conventions.
 
 ## Source of truth
