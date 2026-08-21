@@ -18,7 +18,9 @@ Principal / Governor / Supervisor
         -> Governor / adoption authority
 ```
 
-The **Local Root Agent** is the managed execution boundary. A child worker, subagent, worktree, helper model, or agent-team member is an execution detail of that root unless it has separately granted durable Mission + Scope + Authority and its own canonical Harness identity.
+The **Local Root Agent** is the managed execution boundary. A child worker, subagent, worktree, helper model, or agent-team member is an execution detail of that root unless it independently satisfies the full durable Logical Agent test: Mission + Scope + Authority + persistent Report/Memory, with its own canonical Harness identity established by the governing control plane.
+
+An Active Claim is coordination state. It does not by itself grant Logical Agent identity or authority.
 
 Do not create a new Logical Agent merely because a provider supports subagents or multiple worktrees.
 
@@ -39,7 +41,9 @@ A single local session may process multiple queue items. Queue order does not gr
 
 Before material mutation for each selected item:
 
-- reuse or take over the canonical Active Claim after dedupe;
+- if this root already owns the canonical Active Claim, reuse it;
+- otherwise take over that claim only after an explicit capability/ownership handoff authorizes transfer, or after evidence-backed reconciliation establishes the prior owner as stale, interrupted, or abandoned against the claim, Current Work/Communication, and exact GitHub state;
+- treat dedupe as collision evidence only, not ownership-transfer authority; when ownership remains ambiguous, stop with `CLAIM_RECONCILIATION_REQUIRED` rather than overlap mutation;
 - set the runtime to the actual local runtime and record the real start/current step/next action;
 - reuse the canonical Issue, branch, and PR when safe;
 - do not create replacement branches merely to signal local ownership;
