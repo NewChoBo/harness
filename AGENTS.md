@@ -93,6 +93,21 @@ Apply [`protocol/automation-operation`](standard/protocols/automation-operation.
 
 Direct-main add/delete commits are not a reconciliation mechanism.
 
+## Local coding-agent execution
+
+When exact checkout, build/test/debug loops, UI/E2E/runtime reproduction, performance profiling, repository-wide refactors, Git graph operations, or another code-native capability is materially required, route execution through [`protocol/local-agent-orchestration`](standard/protocols/local-agent-orchestration.md).
+
+The managed boundary is the **Local Root Agent**, not every provider-native child. Codex threads/worktrees, Claude Code subagents/agent teams, and equivalent helpers are ephemeral workers by default and inherit bounded scope/authority from the root. They do not become central Logical Agents merely because the provider creates separate contexts.
+
+A local root may consume multiple currently eligible coding-agent queue items in one session after revalidating exact GitHub state and Active Claims. It may parallelize independent scopes, but must serialize same-candidate/shared-state mutation and reconcile exact branch/SHA/validation/blocker/next action before exit.
+
+Use the provider adapter matching the actual runtime when applicable:
+
+- [`profile/codex-local`](standard/profiles/codex-local.md)
+- [`profile/claude-code`](standard/profiles/claude-code.md)
+
+A producer root's child worker may perform first-party self-review or verification, but it **cannot** satisfy a required producer-distinct Independent Review merely by using a separate context, worktree, subagent, or provider-native `review` role.
+
 ## Failure, recovery, and reporting
 
 `SELF_RECOVERY_ALLOWED != SILENT_FAILURE_ALLOWED`.
