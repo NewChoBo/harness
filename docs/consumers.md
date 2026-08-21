@@ -1,6 +1,6 @@
 # Consumer Boundaries
 
-Agent Harness is cross-domain. Shared artifacts define reusable workflow/governance semantics while each consumer keeps its own product, domain, repository, security, and operational policy local.
+NewChoBo Harness is cross-domain. Shared artifacts define reusable workflow/governance semantics while each consumer keeps its own product, domain, repository, security, and operational policy local.
 
 ## Consumer-owned policy
 
@@ -18,7 +18,7 @@ The shared Harness should reference only the abstract capability or contract nee
 
 ## Shared promotion rule
 
-A consumer rule may move into Agent Harness only when it can be described and validated without exposing consumer-specific names, confidential/domain facts, personal/sensitive information, private identifiers, credentials, or private evidence.
+A consumer rule may move into NewChoBo Harness only when it can be described and validated without exposing consumer-specific names, confidential/domain facts, personal/sensitive information, private identifiers, credentials, or private evidence.
 
 Private evidence may motivate a shared improvement, but the shared artifact records only the generalized finding and the minimum non-sensitive provenance needed for review.
 
