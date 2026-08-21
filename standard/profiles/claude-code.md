@@ -14,7 +14,7 @@ Adapter profile for a Local Root Agent running in Claude Code. It composes with 
 
 Claude Code subagents may be used as ephemeral workers for bounded exploration, implementation, testing, verification, or specialist tasks.
 
-If provider-native agent-team functionality is enabled, treat the team lead as the Local Root Agent and teammates as ephemeral workers unless a teammate has a separately governed durable Harness identity/claim.
+If provider-native agent-team functionality is enabled, treat the team lead as the Local Root Agent and teammates as ephemeral workers unless a teammate independently satisfies the full durable Logical Agent test: Mission + Scope + Authority + persistent Report/Memory, with its own canonical Harness identity established by the governing control plane. An Active Claim is coordination state and does not satisfy that promotion test.
 
 Agent-team availability is an execution capability, not a required Harness dependency. The root must continue to work correctly when only ordinary subagents or a single session are available.
 
