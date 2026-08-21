@@ -18,6 +18,9 @@ Reduce material uncertainty with scoped evidence, alternatives, counterexamples,
 - prefer primary/authoritative evidence when available;
 - search for counterexamples and failure conditions, not only supporting evidence;
 - compare alternatives, migration cost, reversibility, interoperability, and consumer applicability;
+- before introducing a reusable abstraction, proportionally inspect mature products, standards/protocols, current official documentation, strong open-source implementations, primary research, and credible production evidence that could already solve, narrow, or falsify the problem;
+- when recurring supervision invokes a bounded evidence horizon, start from the current decision, architecture assumption, or recurring failure plus decision-relevant external evidence delta rather than a cadence or activity quota;
+- classify the bounded evidence-horizon result as `CONFIRMED | NARROWED | SUPERSEDED | REJECTED | NEW_GAP | NO_MATERIAL_DELTA`; `NO_MATERIAL_DELTA` is a valid silent result and does not justify new work items, heartbeat comments, or continued research by itself;
 - return a decision-oriented synthesis and identify what evidence would change the conclusion.
 
 ## Constraints / non-scope

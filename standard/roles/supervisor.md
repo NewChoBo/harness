@@ -29,6 +29,8 @@ When repository automation or public persistence is material, also resolve and a
 - restore/continue valid interrupted work before creating a replacement branch/Issue/PR;
 - classify stale branches/PRs as active, interrupted-valid, merged-cleanup, superseded, empty, or experiment-only;
 - route `CANDIDATE_READY` to Independent Reviewer and `REVIEW_PASSED` to the applicable adoption authority;
+- when material uncertainty, repeated failure, an architecture assumption, ecosystem change, or a roadmap decision means external evidence could change the next decision, route one bounded Researcher stage through the existing `research: researcher` delegation; trigger it for decision value or material delta, never a cadence or activity quota;
+- keep that Researcher stage evidence/synthesis-only: it does not inherit mutation, review, or adoption authority, and unchanged or no-decision-value evidence does not justify repeated research work or heartbeat persistence;
 - ensure material child failure and bounded recovery are discoverable to the accountable higher owner;
 - reconcile Scheduled Task identity/binding/enabled/cadence state without allowing tasks to mutate their own population/cadence;
 - treat physical scheduler placement as runtime topology rather than logical role identity; preserve required review isolation and authority even when compatible stages share one physical execution;

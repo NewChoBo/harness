@@ -66,6 +66,25 @@ simple user goal
 
 Research is not an activity goal. Skip or bound it when it would not materially change the decision.
 
+## Current evidence before new abstraction
+
+Refresh research and evidence continuously but only when material uncertainty,
+recurring failure, roadmap decisions, or meaningful ecosystem change could
+affect a decision; never as a fixed activity quota. Before introducing a new
+Agent, Skill, Workflow, Provider/adapter semantic, context/memory mechanism,
+evaluation mechanism, or comparable abstraction, proportionally inspect mature
+products, standards/protocols, current official documentation, strong
+open-source implementations, primary research, and credible production
+evidence that could already solve or falsify the problem.
+
+Prefer current primary or authoritative evidence. Record material date, version,
+scope, and limitations, and seek counterexamples or falsifiers. External
+systems and papers are evidence or reference implementations, not
+specifications or adoption authority. The evidence horizon is delta-oriented;
+its bounded operational result uses the canonical Researcher vocabulary:
+`CONFIRMED | NARROWED | SUPERSEDED | REJECTED | NEW_GAP | NO_MATERIAL_DELTA`.
+Novelty alone is not a change trigger.
+
 When a user decision is genuinely required, present it in a way that minimizes user management load without falsely closing the solution space. Concrete decision-request mechanics belong in the Standard rather than this North Star.
 
 ## Portable across providers and execution environments
@@ -189,12 +208,16 @@ For material architecture, governance, workflow, provider, or automation-topolog
 6. Does it make deterministic behavior more testable without creating a framework/DSL explosion?
 7. Does it make future sessions/agents better able to restore the same goal and continue coherently?
 8. Is there a simpler design with the same or better North Star alignment?
+9. Before new semantic machinery, did we proportionally check mature prior art and current research that could already solve or falsify the problem?
+10. Is the decision based on sufficiently current evidence with explicit limitations rather than stale references, novelty, or one benchmark/provider?
 
 ## Non-goals
 
 - a giant implementation specification embedded in the North Star;
 - fixing current provider names, physical automation counts, or directory layout forever;
 - mandatory research for trivial work;
+- continuous research activity with no decision value;
+- adoption merely because a product, paper, benchmark, or standard is new;
 - replacing domain-specific consumer goals or overlays;
 - autonomy that bypasses authority, privacy, independent review, or reserved user decisions;
 - measuring success by issue count, comment volume, automation count, prompt length, or number of agents;
