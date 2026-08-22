@@ -154,6 +154,37 @@ describe('repository Agent Skills', () => {
     });
   });
 
+  it('requires string, non-blank name and description fields', () => {
+    withTemporarySkills((skillsRoot) => {
+      writeSkill(skillsRoot, 'missing-name', '---\ndescription: portable description\n---\n');
+      expect(() => validateRepositorySkills(skillsRoot)).toThrow('name must be a string');
+    });
+
+    withTemporarySkills((skillsRoot) => {
+      writeSkill(
+        skillsRoot,
+        'numeric-name',
+        '---\nname: 42\ndescription: portable description\n---\n',
+      );
+      expect(() => validateRepositorySkills(skillsRoot)).toThrow('name must be a string');
+    });
+
+    withTemporarySkills((skillsRoot) => {
+      writeSkill(skillsRoot, 'blank-name', '---\nname: "   "\ndescription: portable description\n---\n');
+      expect(() => validateRepositorySkills(skillsRoot)).toThrow('name must not be empty');
+    });
+
+    withTemporarySkills((skillsRoot) => {
+      writeSkill(skillsRoot, 'missing-description', '---\nname: missing-description\n---\n');
+      expect(() => validateRepositorySkills(skillsRoot)).toThrow('description must be a string');
+    });
+
+    withTemporarySkills((skillsRoot) => {
+      writeSkill(skillsRoot, 'numeric-description', '---\nname: numeric-description\ndescription: 42\n---\n');
+      expect(() => validateRepositorySkills(skillsRoot)).toThrow('description must be a string');
+    });
+  });
+
   it('enforces portable skill names and parent-directory equality', () => {
     const invalidNames = ['Uppercase', '-leading', 'trailing-', 'double--hyphen'];
 
