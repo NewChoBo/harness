@@ -9,7 +9,12 @@ function parseSkillFrontmatter(source: string): Record<string, unknown> {
     throw new Error('SKILL.md must start with YAML frontmatter');
   }
 
-  const parsed: unknown = parse(match[1]);
+  const frontmatter = match[1];
+  if (frontmatter === undefined) {
+    throw new Error('SKILL.md frontmatter body is missing');
+  }
+
+  const parsed: unknown = parse(frontmatter);
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
     throw new Error('SKILL.md frontmatter must be a YAML mapping');
   }
