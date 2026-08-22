@@ -1,0 +1,130 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://newchobo.dev/agent-harness/agent-adapter.schema.json",
+  "title": "Agent Adapter Manifest",
+  "description": "Provider-neutral capabilities and control operations exposed by an agent runtime adapter.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kind",
+    "id",
+    "runner_type",
+    "interface",
+    "operations",
+    "capabilities"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "kind": { "const": "agent_adapter" },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9.-]*$" },
+    "runner_type": {
+      "enum": [
+        "hosted_agent",
+        "direct_llm",
+        "coding_agent",
+        "deterministic_worker",
+        "human_gateway"
+      ]
+    },
+    "interface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "implementation"],
+      "properties": {
+        "kind": { "enum": ["mcp", "acp", "sdk", "json_rpc", "cli", "http_api"] },
+        "implementation": { "type": "string", "minLength": 1 },
+        "protocol_version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "operations": {
+      "type": "array",
+      "minItems": 5,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "discover",
+          "create_session",
+          "submit_work",
+          "steer",
+          "pause",
+          "resume",
+          "cancel",
+          "get_result",
+          "dispose"
+        ]
+      },
+      "allOf": [
+        { "contains": { "const": "discover" } },
+        { "contains": { "const": "create_session" } },
+        { "contains": { "const": "submit_work" } },
+        { "contains": { "const": "get_result" } },
+        { "contains": { "const": "dispose" } }
+      ]
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["session", "workspace", "scm", "tools", "output"],
+      "properties": {
+        "session": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["persistent", "resumable", "steerable", "pausable", "cancellable"],
+          "properties": {
+            "persistent": { "$ref": "#/definitions/capabilityState" },
+            "resumable": { "$ref": "#/definitions/capabilityState" },
+            "steerable": { "$ref": "#/definitions/capabilityState" },
+            "pausable": { "$ref": "#/definitions/capabilityState" },
+            "cancellable": { "$ref": "#/definitions/capabilityState" }
+          }
+        },
+        "workspace": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["read", "write"],
+          "properties": {
+            "read": { "$ref": "#/definitions/capabilityState" },
+            "write": { "$ref": "#/definitions/capabilityState" }
+          }
+        },
+        "scm": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["read", "commit", "push", "merge"],
+          "properties": {
+            "read": { "$ref": "#/definitions/capabilityState" },
+            "commit": { "$ref": "#/definitions/capabilityState" },
+            "push": { "$ref": "#/definitions/capabilityState" },
+            "merge": { "$ref": "#/definitions/capabilityState" }
+          }
+        },
+        "tools": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["shell", "browser", "mcp", "subagents"],
+          "properties": {
+            "shell": { "$ref": "#/definitions/capabilityState" },
+            "browser": { "$ref": "#/definitions/capabilityState" },
+            "mcp": { "$ref": "#/definitions/capabilityState" },
+            "subagents": { "$ref": "#/definitions/capabilityState" }
+          }
+        },
+        "output": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["streaming_events", "structured_result", "effect_receipt"],
+          "properties": {
+            "streaming_events": { "$ref": "#/definitions/capabilityState" },
+            "structured_result": { "$ref": "#/definitions/capabilityState" },
+            "effect_receipt": { "$ref": "#/definitions/capabilityState" }
+          }
+        }
+      }
+    },
+    "metadata": { "type": "object", "additionalProperties": true }
+  },
+  "definitions": {
+    "capabilityState": { "enum": ["supported", "unsupported", "unknown"] }
+  }
+}

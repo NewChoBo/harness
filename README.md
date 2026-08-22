@@ -7,6 +7,7 @@ NewChoBo Harness is a public, provider-neutral agent/workflow governance and con
 ## Source of truth
 
 - [`docs/north-star.md`](docs/north-star.md) — why the product exists and its desired end state.
+- [`docs/architecture/executable-control-plane.md`](docs/architecture/executable-control-plane.md) — derived machine-contract, adapter, and product-boundary direction.
 - [`standard/`](standard/README.md) — canonical shared operational semantics.
 - [`standard/catalog.yaml`](standard/catalog.yaml) — resource identity/path/kind/provenance metadata.
 - [`src/`](src/) and [`packages/engine/`](packages/engine/) — executable reference implementations.
@@ -38,6 +39,17 @@ pnpm install --frozen-lockfile
 pnpm validate
 pnpm validate:strict
 ```
+
+Provider-neutral adapter manifests, work requests, events, and completion envelopes can be checked
+through the library API or CLI:
+
+```bash
+agent-harness validate-agent manifest examples/agent-control/adapter.yaml
+agent-harness validate-agent request examples/agent-control/work-request.yaml
+```
+
+Capability declarations do not grant authority. The effective Harness policy and bounded WorkItem
+remain the authority source.
 
 ## Semantic model
 

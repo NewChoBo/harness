@@ -4,12 +4,39 @@ import { resolve } from 'node:path';
 import { readStructuredFile } from './io.js';
 import { assertInsideRoot, normalizeRoot } from './paths.js';
 import {
+  bundledAgentContractShapeErrors,
   bundledResultShapeErrors,
   compileSchema,
   formatErrors,
+  validateBundledAgentContractShape,
   validateBundledResultShape,
 } from './schema.js';
-import type { ResolvedWorkflow, ValidationIssue } from './types.js';
+import type {
+  AgentAdapterManifest,
+  AgentContractKind,
+  AgentOperation,
+  AgentWorkRequest,
+  ResolvedWorkflow,
+  ValidationIssue,
+} from './types.js';
+
+export function validateAgentContract(kind: AgentContractKind, value: unknown): ValidationIssue[] {
+  if (!validateBundledAgentContractShape(kind, value)) {
+    return bundledAgentContractShapeErrors(kind).map((message) =>
+      issue('AGENT_CONTRACT_SCHEMA_INVALID', '/', message),
+    );
+  }
+
+  if (kind === 'manifest') {
+    return validateAdapterCapabilities(value as AgentAdapterManifest);
+  }
+
+  if (kind === 'request') {
+    return validateAgentWorkRequest(value as AgentWorkRequest);
+  }
+
+  return [];
+}
 
 export async function validateWorkflow(
   workflow: ResolvedWorkflow,
@@ -191,6 +218,70 @@ function scopesOverlap(left: string, right: string): boolean {
 
 function normalizeScope(scope: string): string {
   return scope.replace(/\/\*\*$/, '').replace(/\/$/, '');
+}
+
+function validateAdapterCapabilities(manifest: AgentAdapterManifest): ValidationIssue[] {
+  const issues: ValidationIssue[] = [];
+  const requiredOperations: Array<{
+    capability: keyof AgentAdapterManifest['capabilities']['session'];
+    operation: AgentOperation;
+  }> = [
+    { capability: 'resumable', operation: 'resume' },
+    { capability: 'steerable', operation: 'steer' },
+    { capability: 'pausable', operation: 'pause' },
+    { capability: 'cancellable', operation: 'cancel' },
+  ];
+
+  for (const { capability, operation } of requiredOperations) {
+    if (
+      manifest.capabilities.session[capability] === 'supported' &&
+      !manifest.operations.includes(operation)
+    ) {
+      issues.push(
+        issue(
+          'ADAPTER_CAPABILITY_OPERATION_MISMATCH',
+          `/capabilities/session/${capability}`,
+          `Capability ${capability} requires operation ${operation}.`,
+        ),
+      );
+    }
+  }
+
+  return issues;
+}
+
+function validateAgentWorkRequest(request: AgentWorkRequest): ValidationIssue[] {
+  const issues: ValidationIssue[] = [];
+  const requested = new Set(request.constraints?.requested_effects ?? []);
+  const prohibited = new Set(request.constraints?.prohibited_effects ?? []);
+
+  for (const effect of requested) {
+    if (prohibited.has(effect)) {
+      issues.push(
+        issue(
+          'AGENT_EFFECT_CONFLICT',
+          '/constraints/requested_effects',
+          `Effect ${effect} is both requested and prohibited.`,
+        ),
+      );
+    }
+  }
+
+  if (request.workspace?.read_only) {
+    for (const effect of ['write_files', 'commit', 'push', 'merge'] as const) {
+      if (requested.has(effect)) {
+        issues.push(
+          issue(
+            'READ_ONLY_WORKSPACE_EFFECT',
+            '/constraints/requested_effects',
+            `Read-only workspace cannot request effect ${effect}.`,
+          ),
+        );
+      }
+    }
+  }
+
+  return issues;
 }
 
 function issue(code: string, path: string, message: string): ValidationIssue {

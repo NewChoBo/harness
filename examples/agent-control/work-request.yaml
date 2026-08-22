@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schemas/agent-work-request.schema.json
+
+schema_version: 1
+kind: agent_work_request
+request_id: request-1
+work_id: work-1
+role: worker
+objective: Implement and validate one bounded change.
+workspace:
+  root_ref: workspace://consumer/repository
+  read_only: false
+  allowed_paths:
+    - src/**
+    - test/**
+constraints:
+  requested_effects:
+    - read
+    - write_files
+    - run_commands
+    - commit
+  prohibited_effects:
+    - push
+    - merge
+    - release
+validation:
+  required_checks:
+    - focused-tests
+  result_schema: harness://schemas/result/1

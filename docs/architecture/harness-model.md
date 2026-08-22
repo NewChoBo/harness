@@ -146,3 +146,7 @@ The exact rules for review invalidation and adoption are canonical in `standard/
 The Harness may recursively evolve its topology, representations, resources, adapters, and governance through its canonical change-safety/review/adoption/effect process.
 
 Near-term work is to stabilize the Standard resources through real canaries. Structured schemas, conformance tooling, typed APIs/controllers, MCP/A2A/runtime adapters, and schedule reconciliation should be added when observed use justifies them rather than because a file-format roadmap demands them.
+
+The derived [`Executable Control-Plane Direction`](executable-control-plane.md) records the current
+machine-contract and adapter direction without replacing the registered Standard or adopting its
+broader database, Web GUI, automatic-upgrade, or naming possibilities.

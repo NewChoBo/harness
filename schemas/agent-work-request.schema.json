@@ -1,0 +1,105 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://newchobo.dev/agent-harness/agent-work-request.schema.json",
+  "title": "Agent Work Request",
+  "description": "Provider-neutral bounded work submitted to an agent adapter.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "request_id", "work_id", "role", "objective"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "kind": { "const": "agent_work_request" },
+    "request_id": { "$ref": "#/definitions/nonEmptyString" },
+    "work_id": { "$ref": "#/definitions/nonEmptyString" },
+    "role": { "$ref": "#/definitions/nonEmptyString" },
+    "objective": { "$ref": "#/definitions/nonEmptyString" },
+    "idempotency_key": { "$ref": "#/definitions/nonEmptyString" },
+    "workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["root_ref", "read_only"],
+      "properties": {
+        "root_ref": { "$ref": "#/definitions/nonEmptyString" },
+        "working_directory": { "$ref": "#/definitions/nonEmptyString" },
+        "base_ref": { "$ref": "#/definitions/nonEmptyString" },
+        "read_only": { "type": "boolean" },
+        "allowed_paths": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/nonEmptyString" },
+          "uniqueItems": true
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "resources": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/nonEmptyString" },
+          "uniqueItems": true
+        },
+        "instructions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/nonEmptyString" }
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requested_effects": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/effect" }
+        },
+        "prohibited_effects": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/effect" }
+        },
+        "stop_conditions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/nonEmptyString" }
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required_checks": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/nonEmptyString" },
+          "uniqueItems": true
+        },
+        "result_schema": { "$ref": "#/definitions/nonEmptyString" }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_turns": { "type": "integer", "minimum": 1 },
+        "timeout_seconds": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "metadata": { "type": "object", "additionalProperties": true }
+  },
+  "definitions": {
+    "nonEmptyString": { "type": "string", "minLength": 1 },
+    "effect": {
+      "enum": [
+        "read",
+        "write_files",
+        "run_commands",
+        "commit",
+        "push",
+        "merge",
+        "release",
+        "external_write"
+      ]
+    }
+  }
+}

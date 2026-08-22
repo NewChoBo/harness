@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://newchobo.dev/agent-harness/agent-event.schema.json",
+  "title": "Agent Event",
+  "description": "Normalized event emitted by an agent adapter session.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kind",
+    "request_id",
+    "session_id",
+    "sequence",
+    "type",
+    "timestamp"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "kind": { "const": "agent_event" },
+    "request_id": { "type": "string", "minLength": 1 },
+    "session_id": { "type": "string", "minLength": 1 },
+    "sequence": { "type": "integer", "minimum": 0 },
+    "type": {
+      "enum": [
+        "session.accepted",
+        "session.started",
+        "agent.message",
+        "agent.progress",
+        "tool.requested",
+        "tool.completed",
+        "input.required",
+        "approval.required",
+        "artifact.created",
+        "checkpoint.created",
+        "session.completed",
+        "session.failed",
+        "session.cancelled"
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
+    },
+    "data": { "type": "object", "additionalProperties": true }
+  }
+}

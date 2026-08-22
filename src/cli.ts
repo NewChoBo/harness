@@ -7,7 +7,8 @@ import { HarnessConfigError } from './errors.js';
 import { readStructuredFile } from './io.js';
 import { resolvePreset } from './resolver.js';
 import { syncHarness } from './sync.js';
-import { validateResultDocument, validateWorkflow } from './validator.js';
+import { validateAgentContract, validateResultDocument, validateWorkflow } from './validator.js';
+import type { AgentContractKind } from './types.js';
 
 async function main(): Promise<void> {
   const [, , command, subject, ...rest] = process.argv;
@@ -40,6 +41,18 @@ async function main(): Promise<void> {
     const value = await readStructuredFile<unknown>(resolve(subject!));
     const issues = await validateResultDocument(value, schema ? resolve(schema) : undefined);
     reportIssues(issues);
+    return;
+  }
+
+  if (command === 'validate-agent') {
+    requireSubject(command, subject);
+    const kind = agentContractKind(subject!);
+    const file = rest[0];
+    if (!file) {
+      throw new Error('validate-agent requires a contract kind and file path.');
+    }
+    const value = await readStructuredFile<unknown>(resolve(file));
+    reportIssues(validateAgentContract(kind, value));
     return;
   }
 
@@ -76,6 +89,13 @@ function requireSubject(command: string, subject?: string): void {
   }
 }
 
+function agentContractKind(value: string): AgentContractKind {
+  if (value === 'manifest' || value === 'request' || value === 'event' || value === 'completion') {
+    return value;
+  }
+  throw new Error(`Unknown agent contract kind: ${value}`);
+}
+
 function reportIssues(issues: Array<{ code: string; path: string; message: string }>): void {
   if (issues.length === 0) {
     process.stdout.write('OK\n');
@@ -92,6 +112,7 @@ function printHelp(): void {
   process.stdout.write('  resolve <preset> [--root <dir>]\n');
   process.stdout.write('  validate <preset> [--root <dir>]\n');
   process.stdout.write('  validate-result <result> [--schema <file>]\n');
+  process.stdout.write('  validate-agent <manifest|request|event|completion> <file>\n');
   process.stdout.write('  sync --target <consumer-root> [--source <harness-root>]\n');
 }
 

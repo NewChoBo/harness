@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schemas/agent-adapter.schema.json
+
+schema_version: 1
+kind: agent_adapter
+id: example.local-coding-agent
+runner_type: coding_agent
+interface:
+  kind: sdk
+  implementation: example-local-coding-adapter
+operations:
+  - discover
+  - create_session
+  - submit_work
+  - steer
+  - resume
+  - cancel
+  - get_result
+  - dispose
+capabilities:
+  session:
+    persistent: supported
+    resumable: supported
+    steerable: supported
+    pausable: unsupported
+    cancellable: supported
+  workspace:
+    read: supported
+    write: supported
+  scm:
+    read: supported
+    commit: supported
+    push: unknown
+    merge: unsupported
+  tools:
+    shell: supported
+    browser: unknown
+    mcp: supported
+    subagents: unknown
+  output:
+    streaming_events: supported
+    structured_result: supported
+    effect_receipt: unsupported
