@@ -1,8 +1,10 @@
 # Roadmap
 
-This document is a compact human-readable projection of the current Agent Harness portfolio. It sequences work toward the canonical [`North Star`](north-star.md) without redefining the North Star, the operational Standard, or concrete WorkItem acceptance criteria.
+This document is a compact human-readable projection of the current NewChoBo Harness portfolio. It sequences work toward the canonical [`North Star`](north-star.md) without redefining the North Star, the operational Standard, or concrete WorkItem acceptance criteria.
 
-Detailed capability semantics, current work state, and acceptance criteria remain with the corresponding GitHub Issues and exact candidate/evidence records. Portfolio decisions are owned by [#46](https://github.com/<template-org>/<template-repo>/issues/46); this file records only horizon, lane, outcome, owner, and the gate that would justify promotion or demotion.
+Detailed capability semantics and acceptance criteria remain with the corresponding public GitHub Issues and exact candidate/evidence records. [Issue #22](https://github.com/NewChoBo/harness/issues/22) is the durable public owner of this roadmap projection.
+
+Issue links in this file are **current semantic owners**, not numeric aliases or template coordinates. Live GitHub object existence, type, state, and current ownership are external evidence and must be reverified when a decision depends on them; deterministic repository validation must not pretend that frozen source can prove mutable GitHub state.
 
 ## Planning horizons
 
@@ -10,59 +12,63 @@ Detailed capability semantics, current work state, and acceptance criteria remai
 - **NEXT** — decision-ready outcome that should follow current gates.
 - **LATER** — valid capability or architecture intentionally deferred until stronger need exists.
 - **RESEARCH** — unresolved question or opportunity requiring evidence before commitment.
-- **PARKED / REJECTED** — duplicate, superseded, overdesigned, or currently unjustified direction.
+- **PARKED / NEEDS_OWNER** — potentially useful direction without a current semantically matching public owner or sufficient promotion evidence.
 
 Use dependency/evidence gates rather than arbitrary dates. Issue creation, a new paper, or a newly named capability does not by itself promote work.
 
 ## Current portfolio projection
 
-| Horizon | Lane / outcome | Primary owner(s) | Gate / promotion condition |
+| Horizon | Lane / outcome | Current public owner | Gate / promotion condition |
 | --- | --- | --- | --- |
-| **NOW** | Correctness / Evidence — verify recently adopted Harness semantics before broad expansion | [#23 Effect Evaluation](https://github.com/<template-org>/<template-repo>/issues/23), with applicable evidence from [#14](https://github.com/<template-org>/<template-repo>/issues/14), [#36](https://github.com/<template-org>/<template-repo>/issues/36), [#43](https://github.com/<template-org>/<template-repo>/issues/43) | Require current-subject evidence coherent enough to support the next investment decision. `ADOPTED != EFFECTIVE`; stale/unavailable evidence does not satisfy the gate. |
-| **NEXT** | Public Product — prepare a clean public preview surface | [#40 Public Release](https://github.com/<template-org>/<template-repo>/issues/40), supported by [#9](https://github.com/<template-org>/<template-repo>/issues/9), [#19](https://github.com/<template-org>/<template-repo>/issues/19), [#20](https://github.com/<template-org>/<template-repo>/issues/20) | Current effect/correctness gates and exact publication gates must be satisfied. Internal adoption is not publication approval; do not expose the private control/evidence history in place. |
-| **NEXT** | Capability Evidence — portable regression scenarios before broad provider/agent/context expansion | [#48 EvalScenario / RegressionCase](https://github.com/<template-org>/<template-repo>/issues/48) | Promote only after the current higher-priority gate permits it and a small cross-provider/runtime proof is decision-relevant. Keep this portable evidence, not a benchmark/test platform. |
-| **NEXT** | Product Discovery — evidence-backed problem/demand input before broad autonomously inferred feature generation | [#50 Problem / Demand Discovery](https://github.com/<template-org>/<template-repo>/issues/50) -> [#25 Solution Discovery](https://github.com/<template-org>/<template-repo>/issues/25) -> [#46 Roadmap](https://github.com/<template-org>/<template-repo>/issues/46) | Needed when autonomous product-demand inference becomes material. Explicit user-directed work continues through normal Decision Safety. Treat this as optional product capability, not mandatory Core. |
-| **NEXT** | Capability Development — minimum Agent/Domain/Skill/Context composition | [#42 AgentDefinition](https://github.com/<template-org>/<template-repo>/issues/42), [#38 Domain Harness](https://github.com/<template-org>/<template-repo>/issues/38), [#39 Skills](https://github.com/<template-org>/<template-repo>/issues/39), [#47 ContextSource](https://github.com/<template-org>/<template-repo>/issues/47) | Order by proven dependency and smallest useful contract. Do not promote merely because an abstraction is named; optional capabilities remain composable rather than universal Core unless cross-context evidence justifies otherwise. |
-| **NEXT** | Consumer / Interoperability Adoption — exact binding, minimal local overlay, and staged convergence | [#6 Consumer Binding](https://github.com/<template-org>/<template-repo>/issues/6), [#10 Consumer Convergence](https://github.com/<template-org>/<template-repo>/issues/10), [#24 Desired/Observed & Interop](https://github.com/<template-org>/<template-repo>/issues/24) | Promote only with exact binding/provenance, preserved consumer-owned policy, and a reversible canary/migration path. Do not infer that all #24 work is deferred merely because broad reconciliation/runtime machinery remains LATER. |
-| **NEXT** | Delivery & Operations — CI/build evidence, then bounded promotion/deployment integration when applicable | [#51 Software Delivery / CI-CD](https://github.com/<template-org>/<template-repo>/issues/51), with [#17](https://github.com/<template-org>/<template-repo>/issues/17), [#19](https://github.com/<template-org>/<template-repo>/issues/19), [#40](https://github.com/<template-org>/<template-repo>/issues/40) as applicable | CI evidence may mature before CD mutation. Promotion/deployment requires explicit applicable authority after adoption/integration; public release additionally remains under #40. Treat software delivery as optional capability, not universal Core. |
-| **LATER** | Runtime / Infrastructure — broad Engine, provider/extension ecosystem, reconciliation/apply machinery | [#11 Harness Engine](https://github.com/<template-org>/<template-repo>/issues/11) / Draft PR [#28](https://github.com/<template-org>/<template-repo>/pull/28), [#15 ExecutionProvider](https://github.com/<template-org>/<template-repo>/issues/15), [#17 Extensions](https://github.com/<template-org>/<template-repo>/issues/17), [#24 Reconciliation](https://github.com/<template-org>/<template-repo>/issues/24) | Keep deferred until a real canary or adopted dependency proves that zero-runtime semantics or provider-native mechanisms are insufficient. Narrow contract slices may be promoted independently when evidence supports them. |
-| **RESEARCH** | Evidence Horizon — track material ecosystem/research changes and unresolved memory semantics | [#43 Continuous Evidence Horizon](https://github.com/<template-org>/<template-repo>/issues/43) plus the current routed research owner | Research may confirm, narrow, supersede, reject, or leave the roadmap unchanged. Memory remains research until existing ContextSource/ToolAdapter/Evidence/Agent primitives are shown insufficient. |
-| **PARKED / REJECTED** | Overdesign boundaries — broad platforms without demonstrated independent value | [#45 Maintenance / Engineering Health](https://github.com/<template-org>/<template-repo>/issues/45) / [#46 Roadmap](https://github.com/<template-org>/<template-repo>/issues/46) | Keep separate technology-specific Core families, duplicate security/artifact platforms, marketplaces, generic schedulers/controllers, evaluator/pipeline DSLs, and similar infrastructure parked unless cross-context evidence demonstrates a durable need. |
+| **NOW** | Agent Security Boundary — keep untrusted input, memory, tool use, authority, and egress fail-closed | [#32](https://github.com/NewChoBo/harness/issues/32) | Promote external/community ingestion or broader autonomous tool exposure only after executable security-boundary evidence and producer-distinct review. |
+| **NOW** | Standard catalog / corpus integrity — make normative resource identity and discovery self-validating | [#24](https://github.com/NewChoBo/harness/issues/24) | Reconcile canonical resources/projections and make deterministic validation reject orphan, duplicate, stale, or invalid registration. New normative resources must pass this gate. |
+| **NOW** | Roadmap / owner-map currentness — keep the public strategic projection semantically aligned with live owners | [#22](https://github.com/NewChoBo/harness/issues/22) | Update only on material owner/gate/sequencing changes. Reverify mutable GitHub owner state externally before relying on it. |
+| **NEXT** | Provider/runtime adapters and read-only external-auditor projection | [#25](https://github.com/NewChoBo/harness/issues/25) | Preserve role-first/provider-second composition; #24 remains the catalog prerequisite for new normative resources and #32 governs untrusted/external input and privileged-tool exposure. |
+| **NEXT** | Organization, durable reporting, dependency routing, and escalation semantics | [#27](https://github.com/NewChoBo/harness/issues/27) | Prefer refinement of existing ownership-routing, supervisor, escalation, and receipt resources; use #24 if normative registration changes. |
+| **NEXT** | Execution liveness and interrupted-work reconciliation | [#42](https://github.com/NewChoBo/harness/issues/42) | `NO_SIGNAL` must be bound to an exact positive execution expectation; conflicting takeover remains blocked without authoritative fencing/stale-writer prevention. Broader executable synthetic-regression acceptance remains with #42. |
+| **NEXT** | Repository / CI / release supply-chain hardening | [#35](https://github.com/NewChoBo/harness/issues/35) | Enforce the repository-native protection, immutable workflow dependency, least-privilege, provenance, dependency/license, and release controls required by the exact release boundary. |
+| **NEXT** | Legal/IP/publication governance | [#33](https://github.com/NewChoBo/harness/issues/33) | Publication remains held until the applicable rights/provenance, protected-disclosure, contributor/dependency, brand, and higher legal-review conditions are explicitly cleared. |
+| **RESEARCH** | Evidence horizon / prior-art testing | **No permanent numeric owner projected here.** | Use an explicit current Research Topic or public Issue when a bounded question is active. Research may confirm, narrow, supersede, reject, or leave roadmap assumptions unchanged; activity alone is not progress. |
+| **PARKED / NEEDS_OWNER** | Product / demand discovery pipeline | **No current semantically matching public owner.** | Do not reuse #25 as “Solution Discovery”; #25 owns provider/runtime adapter semantics. Create/promote a public owner only when autonomous demand discovery becomes a demonstrated need. |
+| **PARKED / NEEDS_OWNER** | Broader extension / tool / trigger ecosystem | **No current semantically matching public owner.** | Do not reuse historical PR #17 as an Extensions owner. #25 may own provider/runtime adapter concerns only where they actually match. Promote broader ecosystem machinery only from concrete cross-provider/consumer evidence. |
+| **PARKED / NEEDS_OWNER** | Generic `AgentDefinition` Core abstraction | **No separate owner.** | Portable Agent composition remains existing role + resolved workflow preset/composition semantics. Do not reuse #42 (liveness) or broaden #25/#27 unless concrete evidence justifies a distinct owner. |
+| **PARKED / NEEDS_OWNER** | Generic software-delivery / CD platform | **No current `#51` owner.** | Keep release/deployment mechanics bounded to existing repository/release gates until a distinct reusable delivery capability is justified. |
 
-Maintenance / Engineering Health work such as [#45](https://github.com/<template-org>/<template-repo>/issues/45), [#16](https://github.com/<template-org>/<template-repo>/issues/16), and [#18](https://github.com/<template-org>/<template-repo>/issues/18) may run in parallel when a bounded correctness/maintenance payoff is clear, without silently promoting deferred feature work.
+## Delivered foundations are not live owner aliases
+
+Closed Issues and merged PRs remain provenance, not current owner-map slots. For example, [#38](https://github.com/NewChoBo/harness/issues/38) delivered the Local Root Agent orchestration/provider-profile baseline through merged PR #39. Historical object numbers must not be relabeled to satisfy a roadmap table.
 
 ## Portfolio relationship
 
-When the full opportunity-to-effect chain is applicable, keep owners connected without turning the relationship into a second lifecycle:
+When the full path is applicable, keep the relationship simple:
 
 ```text
-#43 Technology / Research Horizon
--> #50 Problem / Demand Discovery
--> #25 Solution Discovery
--> #46 Roadmap / Portfolio
--> capability-specific owner
--> #48 EvalScenario / RegressionCase
--> #51 CI / build evidence when applicable
--> #5 Independent Review
--> Governor / applicable adoption authority
+bounded research / current evidence
+-> #22 roadmap sequencing
+-> exact capability Issue owner
+-> exact candidate validation / regression evidence
+-> producer-distinct independent review
+-> governor / applicable adoption authority
 -> integration
--> #51 promotion / deployment when applicable
--> #23 Effect Evaluation
+-> #35 repository/release gate when applicable
+-> #33 publication/legal-IP gate when applicable
+-> current effect evidence
 ```
 
-This relationship grants no implementation, adoption, publication, or deployment authority. `REVIEW_PASSED` is only eligibility for adoption consideration. Publication remains under #40 where applicable, and post-deployment health remains distinct from #23 longer-horizon effect.
+This relationship grants no implementation, review, adoption, publication, deployment, or release authority by itself. A PASS at one stage is evidence for the next decision, not proof that later gates are satisfied.
 
 ## Always-preserved gates
 
-- Runtime/provider capability never grants Harness authority. Route authority/policy to [#12](https://github.com/<template-org>/<template-repo>/issues/12), executable/provider trust to [#17](https://github.com/<template-org>/<template-repo>/issues/17), context trust to [#47](https://github.com/<template-org>/<template-repo>/issues/47), reusable adversarial regression evidence to [#48](https://github.com/<template-org>/<template-repo>/issues/48), and material independent review to [#5](https://github.com/<template-org>/<template-repo>/issues/5) when applicable.
-- Shared/public Harness material stays downstream-consumer anonymous; private control/evidence stays on its authorized surface.
-- Structured resources, roadmap/configuration, eval, context, policy, and delivery surfaces must not become general-purpose execution/expression DSLs.
-- Candidate/review/adoption/publication/deployment/effect identities remain distinct; stale or subject-mismatched evidence cannot justify a later state.
+- Runtime/provider capability never grants Harness authority.
+- Shared/public Harness material stays consumer-anonymous; private control/evidence stays on its authorized surface.
+- [#24](https://github.com/NewChoBo/harness/issues/24) owns normative catalog/corpus integrity; roadmap projection does not redefine resource identity.
+- [#32](https://github.com/NewChoBo/harness/issues/32) owns the cross-cutting Agent Security Boundary for untrusted-input/tool/memory/egress transitions.
+- [#35](https://github.com/NewChoBo/harness/issues/35) owns concrete GitHub/release/supply-chain hardening, while [#33](https://github.com/NewChoBo/harness/issues/33) owns legal/IP/publication governance.
+- Candidate, validation, review, adoption, integration, publication, release, and effect identities remain distinct; stale or subject-mismatched evidence cannot justify a later state.
 - Before adding a package/resource/role/state/workflow, prefer reuse, consolidation, removal, a bounded local solution, or a provider/native standard when it already satisfies the need.
 
 ## Roadmap maintenance
 
-Update this projection only on material strategic deltas: a prerequisite/effect/publication gate changes, ownership consolidates, evidence changes sequencing, or a capability is promoted/demoted/parked. Detailed requirement, security, context, evaluation, delivery, research, and implementation semantics stay in their owner Issues/resources rather than being copied here.
+Update this projection only on a material strategic delta: a prerequisite/effect/publication gate changes, ownership consolidates, evidence changes sequencing, or a capability is promoted/demoted/parked. Detailed requirement, security, context, evaluation, delivery, research, and implementation semantics stay in their owner Issues/resources rather than being copied here.
 
-If nothing material changed, leave the roadmap unchanged.
-
+If a candidate owner is absent, ambiguous, closed, a PR rather than an Issue, or semantically mismatched, mark the lane `PARKED / NEEDS_OWNER` (or omit it) instead of inventing/reusing a numeric alias. If nothing material changed, leave the roadmap unchanged.
