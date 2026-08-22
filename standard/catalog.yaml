@@ -83,6 +83,14 @@ spec:
       path: standard/protocols/public-information-boundary.md
       representation: narrative
       provenance: docs/decisions/0014-public-by-default-information-boundary.md
+    - id: protocol/agent-security-boundary
+      kind: Protocol
+      path: standard/protocols/agent-security-boundary.md
+      representation: narrative
+      provenance:
+        - docs/decisions/0006-decision-safety-and-pre-adoption-review.md
+        - docs/decisions/0010-bounded-execution-outcome-receipts.md
+        - docs/decisions/0014-public-by-default-information-boundary.md
     - id: protocol/automation-operation
       kind: Protocol
       path: standard/protocols/automation-operation.md
