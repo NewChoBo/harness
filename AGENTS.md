@@ -95,11 +95,19 @@ Direct-main add/delete commits are not a reconciliation mechanism.
 
 ## Local coding-agent execution
 
-When exact checkout, build/test/debug loops, UI/E2E/runtime reproduction, performance profiling, repository-wide refactors, Git graph operations, or another code-native capability is materially required, route execution through [`protocol/local-agent-orchestration`](standard/protocols/local-agent-orchestration.md).
+Use [`protocol/local-agent-orchestration`](standard/protocols/local-agent-orchestration.md) when exact checkout, build/test/debug loops, UI/E2E/runtime reproduction, performance profiling, repository-wide refactors, Git graph operations, or another code-native capability materially improves execution or is actually required for the remaining acceptance outcome.
 
-The managed boundary is the **Local Root Agent**, not every provider-native child. Codex threads/worktrees, Claude Code subagents/agent teams, and equivalent helpers are ephemeral workers by default and inherit bounded scope/authority from the root. They do not become central Logical Agents merely because the provider creates separate contexts.
+The **Local Root Agent is an on-demand execution boundary, not an automatic durable work/domain owner or continuously-online service**. An operator may start or stop it independently. An active claim/session is coordination evidence, not by itself an expected pulse. `NO_SIGNAL` requires a positive exact expected-execution, lease, or run-expectation identity, an explicit expectation/observer source, and a bounded observation window or deadline. Without that complete operand, Local absence is `LOCAL_OFFLINE_OR_IDLE / NO_EXPECTED_PULSE` or `UNKNOWN / NEEDS_EVIDENCE` as appropriate, not failure.
 
-A local root may consume multiple currently eligible coding-agent queue items in one session after revalidating exact GitHub state and Active Claims. It may parallelize independent scopes, but must serialize same-candidate/shared-state mutation and reconcile exact branch/SHA/validation/blocker/next action before exit.
+The accountable Logical Agent/work owner continues every safe executable portion when Local is unavailable. Do not park analysis, design, connector-safe source/lifecycle work, evidence preparation, or other safely executable work merely because Local would be convenient. Isolate only the genuine local-only residual gate. `Local preferred` and `Local required` are different claims.
+
+The managed boundary is the Local Root Agent, not every provider-native child. Codex threads/worktrees, Claude Code subagents/agent teams, and equivalent helpers are ephemeral workers by default and inherit bounded scope/authority from the root. They do not become central Logical Agents merely because the provider creates separate contexts.
+
+A local root may consume multiple currently eligible coding-agent queue items in one session after revalidating exact source state and Active Claims. Prefer direct exact reads when Work/Claim/Issue/PR/branch identity is already known. Search/discovery and broad aggregate queries are supporting capabilities, not universal prerequisites; if a complete aggregate cannot be established, fail closed that aggregate conclusion without blocking unrelated exact work.
+
+While a verified expected Local execution is active, material checkpoints such as current step, exact branch/SHA, actual validation result, blocker and next action provide liveness evidence. Only a checkpoint named by the exact expectation above can become overdue for `NO_SIGNAL / RECONCILIATION_REQUIRED`. Re-read current claim/queue/provider state plus commit/push/ref/PR/merge/external side effects before retry or takeover; `no response` does not prove `write failed`. Do not create duplicate branches/PRs. Reconciliation of stale/interrupted/abandoned coordination state may repair claim ownership, but it does not authorize conflicting successor mutation; require authoritative predecessor exclusion/fencing or equivalent exact stale-writer prevention before conflicting takeover.
+
+A local root may parallelize independent scopes, but must serialize same-candidate/shared-state mutation and reconcile exact branch/SHA/validation/blocker/next action before exit when possible. A manual operator stop is not automatically failure or ownership release.
 
 Use the provider adapter matching the actual runtime when applicable:
 
