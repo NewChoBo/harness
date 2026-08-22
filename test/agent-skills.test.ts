@@ -34,7 +34,10 @@ function parseSkillFrontmatter(source: string): Record<string, unknown> {
   return parsed as Record<string, unknown>;
 }
 
-function requireTrimmedString(metadata: Record<string, unknown>, field: string): string {
+function requireTrimmedString(
+  metadata: Record<string, unknown>,
+  field: string,
+): string {
   const value = metadata[field];
   if (typeof value !== 'string') {
     throw new Error(`${field} must be a string`);
@@ -48,7 +51,10 @@ function requireTrimmedString(metadata: Record<string, unknown>, field: string):
   return trimmed;
 }
 
-function validateSkillDirectory(skillsRoot: string, directoryName: string): void {
+function validateSkillDirectory(
+  skillsRoot: string,
+  directoryName: string,
+): void {
   const skillFile = join(skillsRoot, directoryName, 'SKILL.md');
   if (!existsSync(skillFile)) {
     throw new Error(`skills/${directoryName} must contain SKILL.md`);
@@ -99,7 +105,11 @@ function withTemporarySkills(run: (skillsRoot: string) => void): void {
   }
 }
 
-function writeSkill(skillsRoot: string, directoryName: string, source: string): void {
+function writeSkill(
+  skillsRoot: string,
+  directoryName: string,
+  source: string,
+): void {
   const directory = join(skillsRoot, directoryName);
   mkdirSync(directory, { recursive: true });
   writeFileSync(join(directory, 'SKILL.md'), source);
@@ -135,19 +145,31 @@ describe('repository Agent Skills', () => {
     });
 
     withTemporarySkills((skillsRoot) => {
-      writeSkill(skillsRoot, 'unclosed-frontmatter', '---\nname: unclosed-frontmatter\n');
+      writeSkill(
+        skillsRoot,
+        'unclosed-frontmatter',
+        '---\nname: unclosed-frontmatter\n',
+      );
       expect(() => validateRepositorySkills(skillsRoot)).toThrow(
         'SKILL.md must start with closed YAML frontmatter',
       );
     });
 
     withTemporarySkills((skillsRoot) => {
-      writeSkill(skillsRoot, 'malformed-frontmatter', '---\nname: [broken\n---\n');
+      writeSkill(
+        skillsRoot,
+        'malformed-frontmatter',
+        '---\nname: [broken\n---\n',
+      );
       expect(() => validateRepositorySkills(skillsRoot)).toThrow();
     });
 
     withTemporarySkills((skillsRoot) => {
-      writeSkill(skillsRoot, 'list-frontmatter', '---\n- name\n- description\n---\n');
+      writeSkill(
+        skillsRoot,
+        'list-frontmatter',
+        '---\n- name\n- description\n---\n',
+      );
       expect(() => validateRepositorySkills(skillsRoot)).toThrow(
         'SKILL.md frontmatter must be a YAML mapping',
       );
@@ -156,8 +178,14 @@ describe('repository Agent Skills', () => {
 
   it('requires string, non-blank name and description fields', () => {
     withTemporarySkills((skillsRoot) => {
-      writeSkill(skillsRoot, 'missing-name', '---\ndescription: portable description\n---\n');
-      expect(() => validateRepositorySkills(skillsRoot)).toThrow('name must be a string');
+      writeSkill(
+        skillsRoot,
+        'missing-name',
+        '---\ndescription: portable description\n---\n',
+      );
+      expect(() => validateRepositorySkills(skillsRoot)).toThrow(
+        'name must be a string',
+      );
     });
 
     withTemporarySkills((skillsRoot) => {
@@ -166,27 +194,52 @@ describe('repository Agent Skills', () => {
         'numeric-name',
         '---\nname: 42\ndescription: portable description\n---\n',
       );
-      expect(() => validateRepositorySkills(skillsRoot)).toThrow('name must be a string');
+      expect(() => validateRepositorySkills(skillsRoot)).toThrow(
+        'name must be a string',
+      );
     });
 
     withTemporarySkills((skillsRoot) => {
-      writeSkill(skillsRoot, 'blank-name', '---\nname: "   "\ndescription: portable description\n---\n');
-      expect(() => validateRepositorySkills(skillsRoot)).toThrow('name must not be empty');
+      writeSkill(
+        skillsRoot,
+        'blank-name',
+        '---\nname: "   "\ndescription: portable description\n---\n',
+      );
+      expect(() => validateRepositorySkills(skillsRoot)).toThrow(
+        'name must not be empty',
+      );
     });
 
     withTemporarySkills((skillsRoot) => {
-      writeSkill(skillsRoot, 'missing-description', '---\nname: missing-description\n---\n');
-      expect(() => validateRepositorySkills(skillsRoot)).toThrow('description must be a string');
+      writeSkill(
+        skillsRoot,
+        'missing-description',
+        '---\nname: missing-description\n---\n',
+      );
+      expect(() => validateRepositorySkills(skillsRoot)).toThrow(
+        'description must be a string',
+      );
     });
 
     withTemporarySkills((skillsRoot) => {
-      writeSkill(skillsRoot, 'numeric-description', '---\nname: numeric-description\ndescription: 42\n---\n');
-      expect(() => validateRepositorySkills(skillsRoot)).toThrow('description must be a string');
+      writeSkill(
+        skillsRoot,
+        'numeric-description',
+        '---\nname: numeric-description\ndescription: 42\n---\n',
+      );
+      expect(() => validateRepositorySkills(skillsRoot)).toThrow(
+        'description must be a string',
+      );
     });
   });
 
   it('enforces portable skill names and parent-directory equality', () => {
-    const invalidNames = ['Uppercase', '-leading', 'trailing-', 'double--hyphen'];
+    const invalidNames = [
+      'Uppercase',
+      '-leading',
+      'trailing-',
+      'double--hyphen',
+    ];
 
     for (const invalidName of invalidNames) {
       withTemporarySkills((skillsRoot) => {
@@ -219,14 +272,22 @@ describe('repository Agent Skills', () => {
         'long-name',
         `---\nname: ${longName}\ndescription: portable description\n---\n`,
       );
-      expect(() => validateRepositorySkills(skillsRoot)).toThrow('name must be 1-64 characters');
+      expect(() => validateRepositorySkills(skillsRoot)).toThrow(
+        'name must be 1-64 characters',
+      );
     });
   });
 
   it('requires non-empty descriptions no longer than 1024 characters', () => {
     withTemporarySkills((skillsRoot) => {
-      writeSkill(skillsRoot, 'empty-description', '---\nname: empty-description\ndescription: ""\n---\n');
-      expect(() => validateRepositorySkills(skillsRoot)).toThrow('description must not be empty');
+      writeSkill(
+        skillsRoot,
+        'empty-description',
+        '---\nname: empty-description\ndescription: ""\n---\n',
+      );
+      expect(() => validateRepositorySkills(skillsRoot)).toThrow(
+        'description must not be empty',
+      );
     });
 
     withTemporarySkills((skillsRoot) => {
