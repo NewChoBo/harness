@@ -40,12 +40,12 @@ function requireTrimmedString(metadata: Record<string, unknown>, field: string):
     throw new Error(`${field} must be a string`);
   }
 
-  const trimmed = value.trim();
-  if (trimmed.length === 0) {
+  const normalized = field === 'name' ? value : value.trim();
+  if (normalized.trim().length === 0) {
     throw new Error(`${field} must not be empty`);
   }
 
-  return trimmed;
+  return normalized;
 }
 
 function validateSkillDirectory(skillsRoot: string, directoryName: string): void {
@@ -194,7 +194,14 @@ describe('repository Agent Skills', () => {
   });
 
   it('enforces portable skill names and parent-directory equality', () => {
-    const invalidNames = ['Uppercase', '-leading', 'trailing-', 'double--hyphen'];
+    const invalidNames = [
+      'Uppercase',
+      '-leading',
+      'trailing-',
+      'double--hyphen',
+      '" leading-space"',
+      '"trailing-space "',
+    ];
 
     for (const invalidName of invalidNames) {
       withTemporarySkills((skillsRoot) => {
