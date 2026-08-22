@@ -31,7 +31,7 @@ Do not create a new Logical Agent merely because a provider supports subagents o
 
 A Local Root Agent is an **on-demand execution capability**, not a continuously-online Harness service. An operator may start or stop the local runtime independently of the durable work owner.
 
-When no exact local claim, lease, or externally observable active local session exists, treat the runtime as `LOCAL_OFFLINE_OR_IDLE / NO_EXPECTED_PULSE`, not as failed.
+A local pulse is expected only when an observer can name a positive exact expected-execution, lease, or run-expectation identity, the source that establishes and observes that expectation, and a bounded observation window or deadline. An Active Claim or visible session is coordination evidence but is not, by itself, such an expectation. Without that complete expectation operand, treat an absent local runtime as `LOCAL_OFFLINE_OR_IDLE / NO_EXPECTED_PULSE` rather than inferring `NO_SIGNAL`.
 
 Prefer the smallest safe capable runtime for each work slice:
 
@@ -62,9 +62,15 @@ Optional discovery/aggregation capability must not become a hidden prerequisite 
 
 ## Local liveness and interrupted execution
 
-A local liveness expectation exists only while an exact active local claim/lease/session is externally evidenced. Do not infer a missed pulse from an idle or manually stopped local runtime with no active execution expectation.
+`NO_SIGNAL` requires a positive, externally observable execution expectation. Before declaring it, preserve all of:
 
-While local execution is active, use normal material execution evidence as checkpoints rather than heartbeat spam. Useful checkpoints include:
+- an exact expected-execution, lease, or run-expectation identity;
+- the authority/source that created the expectation and the observer/source that can verify it independently of the execution being observed;
+- a bounded observation window or deadline and the checkpoint/evidence expected inside that window.
+
+An Active Claim, a provider session object, or an old progress timestamp alone does not establish that operand. If the expectation identity, observer/source, or bounded window cannot be verified, classify the liveness conclusion as `UNKNOWN / NEEDS_EVIDENCE` or `LOCAL_OFFLINE_OR_IDLE / NO_EXPECTED_PULSE` as appropriate; do not manufacture a missed pulse.
+
+While a verified expected execution is active, use normal material execution evidence as checkpoints rather than heartbeat spam. Useful checkpoints include:
 
 - current work/claim step and next action;
 - exact branch/ref/candidate SHA;
@@ -72,7 +78,7 @@ While local execution is active, use normal material execution evidence as check
 - queue or claim lifecycle transition;
 - durable receipt/report/checkpoint evidence when the governing control plane uses it.
 
-If an expected material checkpoint exceeds its bounded observation window, classify the situation as `NO_SIGNAL / RECONCILIATION_REQUIRED`, not `FAILED`.
+If the checkpoint named by that exact expectation is absent after its bounded observation window, classify the situation as `NO_SIGNAL / RECONCILIATION_REQUIRED`, not `FAILED`.
 
 `NO_SIGNAL` alone must not:
 
@@ -94,7 +100,8 @@ These semantics specialize the provider-neutral interrupted-execution/reconcilia
 Before material mutation for each selected item:
 
 - if this root already owns the canonical Active Claim, reuse it;
-- otherwise take over that claim only after an explicit capability/ownership handoff authorizes transfer, or after evidence-backed reconciliation establishes the prior owner as stale, interrupted, abandoned, completed elsewhere, or otherwise no longer permitted to perform conflicting mutation;
+- otherwise reconcile or transfer the **coordination claim** only after an explicit capability/ownership handoff or evidence-backed reconciliation establishes the prior owner as stale, interrupted, abandoned, completed elsewhere, or otherwise no longer the current coordination owner;
+- never treat that coordination reconciliation as permission for conflicting successor mutation. Before a successor performs overlapping mutation, establish authoritative predecessor exclusion/fencing or an equivalent exact stale-writer-prevention invariant for the target. If that mutation fence is unavailable or unverifiable, stop conflicting mutation with `CLAIM_RECONCILIATION_REQUIRED` / `NEEDS_EVIDENCE` even when the coordination claim itself can be reassigned;
 - treat dedupe as collision evidence only, not ownership-transfer authority; when ownership remains ambiguous, stop with `CLAIM_RECONCILIATION_REQUIRED` rather than overlap mutation;
 - set the runtime to the actual local runtime and record the real start/current step/next action;
 - reuse the canonical Issue, branch, and PR when safe;
