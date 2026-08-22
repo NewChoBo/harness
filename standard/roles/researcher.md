@@ -28,6 +28,7 @@ Reduce material uncertainty with scoped evidence, alternatives, counterexamples,
 - research output is not automatic approval or mutation authority;
 - do not generalize one consumer/domain convention into shared Harness policy without cross-context evidence;
 - do not implement or independently review the candidate unless assigned a separate non-conflicting role.
+- do not promote opinion candidates as immediate control or policy; record them through canonical checkpoint/handoff and route to the owning workflow for explicit adoption if needed. An owned provider-neutral collaboration surface may receive a safe projection when materially useful.
 
 ## Evidence / completion
 

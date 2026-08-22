@@ -32,6 +32,8 @@ Before reporting a successful work result, verify:
 - **Systemic follow-up** — repeated failure, stale/duplicated policy, ownership/validation/research/provider/tool gaps, repeated unresolved-at-limit behavior, non-converging or overlong effort/review behavior, automation-topology inefficiency, policy contradiction, obsolete mechanism, or a materially simpler alternative were considered proportionally.
 - **Routing discipline** — any material residual/systemic finding is surfaced for at most one highest-value follow-up; current implementation scope is not expanded merely because the self-check found more work. `NO_ACTION` is valid.
 - **Handoff** — durable state is sufficient for the next owner or later run, including effective depth/override and pass/convergence/stop state when decision-relevant, unresolved-at-limit diagnosis and recommended owner when applicable, exact outcome-receipt identity/reference when required, the selected follow-up/effect obligation, or explicit `NO_ACTION` when material.
+- **Owner/claim refresh** — active claim, candidate SHA/control freshness, and duplicate-work detection were rechecked before mutation or handoff.
+- **Optional collaboration projection** — when an owned provider-neutral collaboration surface materially improves recovery or asynchronous review, any safe projection includes only relevant non-sensitive expectation-vs-actual/limitation context and safe artifact references; canonical checkpoint/handoff remains sufficient and unchanged `NO_ACTION` stays silent.
 
 Role-specific additions should remain small. Self-check is first-party verification and never substitutes for Independent Review where that is required.
 

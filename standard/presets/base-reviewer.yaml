@@ -4,7 +4,7 @@ id: base-independent-reviewer
 role:
   id: independent-reviewer
   type: reviewer
-  path: ../roles/reviewer.md
+  path: ../roles/independent-reviewer.md
 protocols:
   - ../protocols/state-restore.md
   - ../protocols/independent-review.md
