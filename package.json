@@ -50,7 +50,7 @@
     "release:publish:workflows": "npm --workspace @newchobo/harness-workflow-coding publish --access public --tag alpha && npm --workspace @newchobo/harness-workflow-novel publish --access public --tag alpha && npm --workspace @newchobo/harness-workflow-research publish --access public --tag alpha",
     "release:publish": "npm run release:publish:root && npm run release:publish:engine && npm run release:publish:workflows",
     "release": "npm run release:check && npm run release:publish",
-    "format:check": "prettier --write \"test/agent-skills.test.ts\" && git diff -- test/agent-skills.test.ts && exit 1",
+    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.mjs\" \"schemas/**/*.json\" \"standard/**/*.{md,yaml}\" \"skills/**/*.md\" \"examples/**/*.{md,yaml}\" \"packages/**/*.{md,yaml,json,ts}\" \".newchobo/**/*.md\" AGENTS.md README.md CONTRIBUTING.md SECURITY.md package.json \"tsconfig*.json\" vitest.config.ts \".github/workflows/*.yml\"",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.mjs\" \"schemas/**/*.json\" \"standard/**/*.{md,yaml}\" \"skills/**/*.md\" \"examples/**/*.{md,yaml}\" \"packages/**/*.{md,yaml,json,ts}\" \".newchobo/**/*.md\" AGENTS.md README.md CONTRIBUTING.md SECURITY.md package.json \"tsconfig*.json\" vitest.config.ts \".github/workflows/*.yml\"",
     "format:write": "npm run format",
     "fix": "npm run lint:fix && npm run format:write"
