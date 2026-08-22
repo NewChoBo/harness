@@ -4,7 +4,7 @@
 
 Adapter profile for a Local Root Agent running in Claude Code. It composes with `protocol/local-agent-orchestration` and does not grant additional authority.
 
-Claude Code is an **on-demand execution runtime**, not a continuously-online Harness service. An operator may start or stop it independently of the durable work owner. No active Claude Code claim/session means `LOCAL_OFFLINE_OR_IDLE / NO_EXPECTED_PULSE`, not failure.
+Claude Code is an **on-demand execution runtime**, not a continuously-online Harness service. An operator may start or stop it independently of the durable work owner. Without a positive exact expected-execution, lease, or run-expectation identity plus an explicit observer/source and bounded observation window, there is no expected Claude Code pulse; an active claim/session alone does not establish `NO_SIGNAL` eligibility.
 
 The accountable Logical Agent/work owner remains responsible for the work unless authority is explicitly transferred. If Claude Code is unavailable, another authorized runtime should continue every safe executable portion and leave only the genuinely local-only residual gate.
 
@@ -56,11 +56,13 @@ Do not park connector-safe analysis, governance, lifecycle reconciliation, or ot
 
 ## Active-session checkpoints and no-signal recovery
 
-While Claude Code owns an active claim/session, material progress should preserve the current step, exact branch/SHA, actual validation result, blocker and next action. These execution-derived checkpoints are the liveness evidence; do not create presence-only heartbeat spam.
+An active claim/session is coordination evidence, not by itself a liveness expectation. `NO_SIGNAL` may be evaluated only when an observer can identify the exact expected execution/lease/run expectation, its expectation and observer source, and the bounded window/deadline for a named material checkpoint.
 
-If an expected checkpoint disappears beyond its bounded window, classify `NO_SIGNAL / RECONCILIATION_REQUIRED`, not `FAILED`. Before retry or takeover, inspect current claim/queue state and exact Git/source side effects such as commit, push, branch/ref, PR, merge or external writes. Missing response is not proof that a write failed.
+While such a verified expected Claude Code execution is active, material progress should preserve the current step, exact branch/SHA, actual validation result, blocker and next action. These execution-derived checkpoints are liveness evidence; do not create presence-only heartbeat spam.
 
-Do not auto-release the claim or create a duplicate branch/PR. Conflicting recovery mutation requires the exclusion/fencing or stale-writer-prevention guarantees defined by the shared interrupted-execution semantics.
+If the checkpoint named by that expectation is absent after its bounded window, classify `NO_SIGNAL / RECONCILIATION_REQUIRED`, not `FAILED`. If the expectation operand cannot be established, use `LOCAL_OFFLINE_OR_IDLE / NO_EXPECTED_PULSE` or `UNKNOWN / NEEDS_EVIDENCE` as appropriate instead of inferring a missed pulse. Before retry or takeover, inspect current claim/queue state and exact Git/source side effects such as commit, push, branch/ref, PR, merge or external writes. Missing response is not proof that a write failed.
+
+Do not auto-release the claim or create a duplicate branch/PR. Reconciliation of stale/interrupted/abandoned coordination state may repair claim ownership, but it does not authorize conflicting successor mutation. Conflicting recovery mutation requires authoritative predecessor exclusion/fencing or equivalent exact stale-writer prevention defined by the shared interrupted-execution semantics.
 
 ## Exit
 
