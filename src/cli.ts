@@ -6,9 +6,10 @@ import { stringify } from 'yaml';
 import { HarnessConfigError } from './errors.js';
 import { readStructuredFile } from './io.js';
 import { resolvePreset } from './resolver.js';
+import { setupHarnessProject } from './setup.js';
 import { syncHarness } from './sync.js';
 import { validateAgentContract, validateResultDocument, validateWorkflow } from './validator.js';
-import type { AgentContractKind } from './types.js';
+import type { AgentContractKind, SetupProvider } from './types.js';
 
 async function main(): Promise<void> {
   const [, , command, subject, ...rest] = process.argv;
@@ -56,6 +57,23 @@ async function main(): Promise<void> {
     return;
   }
 
+  if (command === 'setup') {
+    const args = [subject, ...rest].filter(Boolean) as string[];
+    const target = option(args, '--target');
+    const source = option(args, '--source');
+    if (!target) {
+      throw new Error('setup requires --target <consumer-root>.');
+    }
+    const providers = parseSetupProviders(option(args, '--providers') ?? 'codex');
+    const result = await setupHarnessProject({
+      targetRoot: resolve(target),
+      sourceRoot: source ? resolve(source) : undefined,
+      providers,
+    });
+    process.stdout.write(stringify(result));
+    return;
+  }
+
   if (command === 'sync') {
     const args = [subject, ...rest].filter(Boolean) as string[];
     const target = option(args, '--target');
@@ -96,6 +114,19 @@ function agentContractKind(value: string): AgentContractKind {
   throw new Error(`Unknown agent contract kind: ${value}`);
 }
 
+function parseSetupProviders(value: string): SetupProvider[] {
+  if (value === 'none') {
+    return [];
+  }
+  return value.split(',').map((item) => {
+    const normalized = item.trim().replaceAll('-', '_');
+    if (normalized === 'codex' || normalized === 'claude_code' || normalized === 'copilot') {
+      return normalized;
+    }
+    throw new Error(`Unknown setup provider: ${item}`);
+  });
+}
+
 function reportIssues(issues: Array<{ code: string; path: string; message: string }>): void {
   if (issues.length === 0) {
     process.stdout.write('OK\n');
@@ -113,6 +144,9 @@ function printHelp(): void {
   process.stdout.write('  validate <preset> [--root <dir>]\n');
   process.stdout.write('  validate-result <result> [--schema <file>]\n');
   process.stdout.write('  validate-agent <manifest|request|event|completion> <file>\n');
+  process.stdout.write(
+    '  setup --target <consumer-root> [--source <harness-root>] [--providers <list|none>]\n',
+  );
   process.stdout.write('  sync --target <consumer-root> [--source <harness-root>]\n');
 }
 

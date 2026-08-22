@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://newchobo.dev/agent-harness/project-harness.schema.json",
+  "title": "Project Harness Binding",
+  "description": "Small project-owned entrypoint binding an exact installed Harness Bundle and local overlays.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schema_version", "kind", "base", "providers", "overlays"],
+  "properties": {
+    "$schema": { "type": "string", "minLength": 1 },
+    "schema_version": { "const": 1 },
+    "kind": { "const": "project_harness_binding" },
+    "base": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "integrity", "vendor_path", "catalog"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "integrity": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "vendor_path": { "type": "string", "minLength": 1 },
+        "catalog": { "type": "string", "minLength": 1 }
+      }
+    },
+    "providers": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "enum": ["codex", "claude_code", "copilot"] }
+    },
+    "overlays": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

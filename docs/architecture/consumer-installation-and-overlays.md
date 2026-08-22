@@ -33,7 +33,10 @@ Consumer rules:
 - preserve rollback to a prior exact base;
 - review material upstream upgrades before adoption.
 
-For early v0.x, manual/repository-native vendoring is acceptable. A package manager or Harness-specific sync CLI is not required.
+For early v0.x, manual/repository-native vendoring remains acceptable. The reference package also
+provides `syncHarness()` / `installHarnessBundle()` for exact Bundle vendoring and
+`setupHarnessProject()` for a small project binding plus selected provider bootstrap pointers. A
+package manager or Harness-specific CLI is not required after the exact Bundle is installed.
 
 ## 3. Consumer entrypoint
 
@@ -257,7 +260,8 @@ This syntax is illustrative only. YAML is a likely serialization, not the archit
 
 ## 14. Future tooling
 
-Optional tooling may eventually provide:
+The reference implementation currently provides compatible `sync` and `setup` foundations. Optional
+tooling may expand toward:
 
 ```text
 harness init
@@ -270,3 +274,9 @@ harness reconcile
 ```
 
 Such tooling is an implementation/reference layer around the same Semantic Resource Model. Consumers remain free to implement compatible loaders/controllers in other languages/runtimes.
+
+The canonical distribution unit is the versioned Bundle manifest and its integrity-bound resources,
+not npm itself. npm, a GitHub Release, an exact Git ref, a local directory, a Web GUI, or an agent
+setup flow may transport the same Bundle. Provider-specific instruction files contain only managed
+bootstrap pointers to the project-owned binding; they do not duplicate the installed operational
+policy.

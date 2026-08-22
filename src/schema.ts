@@ -12,6 +12,8 @@ function loadBundledSchema(name: string): object {
 
 const presetValidator = ajv.compile(loadBundledSchema('preset.schema.json'));
 const resultValidator = ajv.compile(loadBundledSchema('result.schema.json'));
+const harnessBundleValidator = ajv.compile(loadBundledSchema('harness-bundle.schema.json'));
+const projectHarnessValidator = ajv.compile(loadBundledSchema('project-harness.schema.json'));
 const agentContractValidators = {
   manifest: ajv.compile(loadBundledSchema('agent-adapter.schema.json')),
   request: ajv.compile(loadBundledSchema('agent-work-request.schema.json')),
@@ -33,6 +35,22 @@ export function validateBundledResultShape(value: unknown): boolean {
 
 export function bundledResultShapeErrors(): string[] {
   return formatErrors(resultValidator.errors);
+}
+
+export function validateBundledHarnessBundleShape(value: unknown): boolean {
+  return harnessBundleValidator(value) as boolean;
+}
+
+export function bundledHarnessBundleShapeErrors(): string[] {
+  return formatErrors(harnessBundleValidator.errors);
+}
+
+export function validateBundledProjectHarnessShape(value: unknown): boolean {
+  return projectHarnessValidator(value) as boolean;
+}
+
+export function bundledProjectHarnessShapeErrors(): string[] {
+  return formatErrors(projectHarnessValidator.errors);
 }
 
 export function validateBundledAgentContractShape(

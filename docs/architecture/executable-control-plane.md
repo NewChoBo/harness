@@ -47,6 +47,12 @@ Git owns released definitions and migrations. An operational store owns mutable 
 Provider adapters own physical IDs and transport details. User projections read and mutate the same
 underlying contracts; the Web GUI, chat interface, and CLI must not become competing truth stores.
 
+The portable release artifact is `harness.bundle.json` plus its declared resources. npm is the
+initial public transport, not the semantic source or a permanent runtime prerequisite. The reference
+setup API vendors the exact Bundle, records its integrity, writes a small project binding, and adds
+managed pointers to selected Codex, Claude Code, or Copilot instruction files without replacing
+project-owned content.
+
 Secrets and credentials never belong in a public definition or adapter manifest. They are resolved
 from an authorized runtime secret store.
 

@@ -10,6 +10,7 @@ NewChoBo Harness is a public, provider-neutral agent/workflow governance and con
 - [`docs/architecture/executable-control-plane.md`](docs/architecture/executable-control-plane.md) — derived machine-contract, adapter, and product-boundary direction.
 - [`standard/`](standard/README.md) — canonical shared operational semantics.
 - [`standard/catalog.yaml`](standard/catalog.yaml) — resource identity/path/kind/provenance metadata.
+- [`harness.bundle.json`](harness.bundle.json) — exact-version portable distribution manifest.
 - [`src/`](src/) and [`packages/engine/`](packages/engine/) — executable reference implementations.
 - [`packages/`](packages/) — public workflow packages.
 - [`.newchobo/harness/`](.newchobo/harness/) — public repository-owned Scheduled Task bootstrap sources.
@@ -50,6 +51,19 @@ agent-harness validate-agent request examples/agent-control/work-request.yaml
 
 Capability declarations do not grant authority. The effective Harness policy and bounded WorkItem
 remain the authority source.
+
+The npm package is a distribution channel, not a runtime requirement for installed guidance. A
+one-shot setup vendors the exact Bundle, writes an integrity lock and small project binding, and adds
+only managed pointers to selected provider instruction files:
+
+```bash
+pnpm dlx @newchobo/harness setup \
+  --target . \
+  --providers codex,claude-code,copilot
+```
+
+The same `setupHarnessProject()` API can be called from a Web GUI, setup agent, or another installer
+without requiring users to operate the CLI.
 
 ## Semantic model
 

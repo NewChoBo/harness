@@ -1,0 +1,23 @@
+{
+  "$schema": "./schemas/harness-bundle.schema.json",
+  "schema_version": 1,
+  "kind": "harness_bundle",
+  "name": "@newchobo/harness",
+  "version": "0.1.0-alpha.0",
+  "resources": [
+    {
+      "source": "schemas",
+      "target": "schemas"
+    },
+    {
+      "source": "standard",
+      "target": "standard"
+    }
+  ],
+  "entrypoints": {
+    "catalog": "standard/catalog.yaml"
+  },
+  "metadata": {
+    "status": "experimental"
+  }
+}

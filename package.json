@@ -28,6 +28,7 @@
   },
   "files": [
     "dist",
+    "harness.bundle.json",
     "schemas",
     "standard",
     ".newchobo/harness",

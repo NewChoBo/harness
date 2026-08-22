@@ -16,6 +16,7 @@ describe('exact-version consumer sync', () => {
     const result = await syncHarness(target, root);
     const lock = parse(await readFile(result.lockPath, 'utf8')) as any;
 
+    expect(result.name).toBe('@newchobo/harness');
     expect(result.version).toBe('0.1.0-alpha.0');
     expect(result.integrity).toMatch(/^sha256:[0-9a-f]{64}$/);
     expect(lock.harness.version).toBe(result.version);
@@ -23,5 +24,8 @@ describe('exact-version consumer sync', () => {
     await expect(
       readFile(join(result.vendorPath, 'standard', 'presets', 'base-supervisor.yaml'), 'utf8'),
     ).resolves.toContain('base-supervisor');
+    await expect(readFile(join(result.vendorPath, 'bundle.json'), 'utf8')).resolves.toContain(
+      'harness_bundle',
+    );
   });
 });

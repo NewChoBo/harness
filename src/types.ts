@@ -73,10 +73,42 @@ export interface ResolveOptions {
 }
 
 export interface SyncResult {
+  name: string;
   version: string;
   vendorPath: string;
   integrity: string;
   lockPath: string;
+}
+
+export interface HarnessBundleResource {
+  source: string;
+  target: string;
+}
+
+export interface HarnessBundleManifest {
+  $schema?: string;
+  schema_version: 1;
+  kind: 'harness_bundle';
+  name: string;
+  version: string;
+  resources: HarnessBundleResource[];
+  entrypoints: {
+    catalog: string;
+  };
+  metadata?: Record<string, unknown>;
+}
+
+export type SetupProvider = 'codex' | 'claude_code' | 'copilot';
+
+export interface SetupHarnessProjectOptions {
+  targetRoot: string;
+  sourceRoot?: string;
+  providers?: SetupProvider[];
+}
+
+export interface SetupHarnessProjectResult extends SyncResult {
+  bindingPath: string;
+  bootstrapPaths: string[];
 }
 
 export type AgentContractKind = 'manifest' | 'request' | 'event' | 'completion';

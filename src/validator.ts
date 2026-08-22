@@ -5,10 +5,14 @@ import { readStructuredFile } from './io.js';
 import { assertInsideRoot, normalizeRoot } from './paths.js';
 import {
   bundledAgentContractShapeErrors,
+  bundledHarnessBundleShapeErrors,
+  bundledProjectHarnessShapeErrors,
   bundledResultShapeErrors,
   compileSchema,
   formatErrors,
   validateBundledAgentContractShape,
+  validateBundledHarnessBundleShape,
+  validateBundledProjectHarnessShape,
   validateBundledResultShape,
 } from './schema.js';
 import type {
@@ -16,9 +20,71 @@ import type {
   AgentContractKind,
   AgentOperation,
   AgentWorkRequest,
+  HarnessBundleManifest,
   ResolvedWorkflow,
   ValidationIssue,
 } from './types.js';
+
+export function validateHarnessBundleManifest(value: unknown): ValidationIssue[] {
+  if (!validateBundledHarnessBundleShape(value)) {
+    return bundledHarnessBundleShapeErrors().map((message) =>
+      issue('HARNESS_BUNDLE_SCHEMA_INVALID', '/', message),
+    );
+  }
+
+  const manifest = value as HarnessBundleManifest;
+  const issues: ValidationIssue[] = [];
+  const targets = new Set<string>();
+
+  for (const [index, resource] of manifest.resources.entries()) {
+    for (const [field, path] of [
+      ['source', resource.source],
+      ['target', resource.target],
+    ] as const) {
+      if (!isPortableRelativePath(path)) {
+        issues.push(
+          issue(
+            'HARNESS_BUNDLE_PATH_INVALID',
+            `/resources/${index}/${field}`,
+            `Bundle resource path must be portable and relative: ${path}`,
+          ),
+        );
+      }
+    }
+
+    if (targets.has(resource.target)) {
+      issues.push(
+        issue(
+          'HARNESS_BUNDLE_TARGET_DUPLICATE',
+          `/resources/${index}/target`,
+          `Bundle resource target is duplicated: ${resource.target}`,
+        ),
+      );
+    }
+    targets.add(resource.target);
+  }
+
+  if (!isPortableRelativePath(manifest.entrypoints.catalog)) {
+    issues.push(
+      issue(
+        'HARNESS_BUNDLE_PATH_INVALID',
+        '/entrypoints/catalog',
+        `Bundle catalog path must be portable and relative: ${manifest.entrypoints.catalog}`,
+      ),
+    );
+  }
+
+  return issues;
+}
+
+export function validateProjectHarnessBinding(value: unknown): ValidationIssue[] {
+  if (validateBundledProjectHarnessShape(value)) {
+    return [];
+  }
+  return bundledProjectHarnessShapeErrors().map((message) =>
+    issue('PROJECT_HARNESS_SCHEMA_INVALID', '/', message),
+  );
+}
 
 export function validateAgentContract(kind: AgentContractKind, value: unknown): ValidationIssue[] {
   if (!validateBundledAgentContractShape(kind, value)) {
@@ -218,6 +284,18 @@ function scopesOverlap(left: string, right: string): boolean {
 
 function normalizeScope(scope: string): string {
   return scope.replace(/\/\*\*$/, '').replace(/\/$/, '');
+}
+
+function isPortableRelativePath(value: string): boolean {
+  if (
+    value.length === 0 ||
+    value.startsWith('/') ||
+    value.includes('\\') ||
+    /^[A-Za-z]:/u.test(value)
+  ) {
+    return false;
+  }
+  return !value.split('/').some((part) => part === '..' || part.length === 0);
 }
 
 function validateAdapterCapabilities(manifest: AgentAdapterManifest): ValidationIssue[] {

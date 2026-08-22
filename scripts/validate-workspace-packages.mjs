@@ -60,6 +60,19 @@ if (existsSync('package-lock.json'))
   errors.push('package-lock.json: competing npm lockfile must not be committed');
 if (!root.files?.includes('.newchobo/harness'))
   errors.push('package.json: files must include .newchobo/harness');
+if (!root.files?.includes('harness.bundle.json'))
+  errors.push('package.json: files must include harness.bundle.json');
+
+let bundle;
+try {
+  bundle = JSON.parse(readFileSync('harness.bundle.json', 'utf8'));
+} catch (error) {
+  errors.push(`harness.bundle.json: invalid JSON (${error.message})`);
+}
+if (bundle?.name !== root.name)
+  errors.push(`harness.bundle.json: name must match package ${root.name}`);
+if (bundle?.version !== version)
+  errors.push(`harness.bundle.json: version must match package ${version}`);
 
 let workspace;
 try {
@@ -100,11 +113,14 @@ if (lockfile?.snapshots?.[`@newchobo/harness@${version}`])
   errors.push('pnpm-lock.yaml: synchronized @newchobo/harness registry snapshot must be absent');
 
 const requiredFiles = [
+  'harness.bundle.json',
   'standard/catalog.yaml',
   'standard/protocols/public-information-boundary.md',
   'standard/protocols/automation-operation.md',
   'standard/checklists/public-automation-safety.md',
   'schemas/harness-catalog.schema.json',
+  'schemas/harness-bundle.schema.json',
+  'schemas/project-harness.schema.json',
   'packages/harness-workflow-coding/preset.yaml',
   'packages/harness-workflow-novel/preset.yaml',
   'packages/harness-workflow-research/preset.yaml',
