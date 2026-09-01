@@ -53,11 +53,21 @@ jobs:
                 .filter((pull) => pull.head.repo?.full_name === `${owner}/${repo}`)
                 .map((pull) => pull.head.ref),
             );
+            const activeBases = new Set(
+              openPulls
+                .filter((pull) => pull.base.repo?.full_name === `${owner}/${repo}`)
+                .map((pull) => pull.base.ref),
+            );
             const comparisonsByHead = new Map();
             const cleanupDebt = [];
 
             for (const branch of branches) {
-              if (branch.name === defaultBranch || branch.protected || activeHeads.has(branch.name)) {
+              if (
+                branch.name === defaultBranch ||
+                branch.protected ||
+                activeHeads.has(branch.name) ||
+                activeBases.has(branch.name)
+              ) {
                 continue;
               }
               if (!shortLivedPrefixes.some((prefix) => branch.name.startsWith(prefix))) {
