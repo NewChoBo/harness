@@ -53,6 +53,7 @@ jobs:
                 .filter((pull) => pull.head.repo?.full_name === `${owner}/${repo}`)
                 .map((pull) => pull.head.ref),
             );
+            const comparisonsByHead = new Map();
             const cleanupDebt = [];
 
             for (const branch of branches) {
@@ -63,23 +64,32 @@ jobs:
                 continue;
               }
 
-              const comparison = await github.request(
-                'GET /repos/{owner}/{repo}/compare/{basehead}',
-                {
-                  owner,
-                  repo,
-                  basehead: `${defaultBranch}...${branch.name}`,
-                },
-              );
+              let comparison = comparisonsByHead.get(branch.commit.sha);
+              if (!comparison) {
+                const response = await github.request(
+                  'GET /repos/{owner}/{repo}/compare/{basehead}',
+                  {
+                    owner,
+                    repo,
+                    basehead: `${defaultBranch}...${branch.commit.sha}`,
+                  },
+                );
+                comparison = response.data;
+                comparisonsByHead.set(branch.commit.sha, comparison);
+              } else {
+                core.info(
+                  `Reusing ${defaultBranch}...${branch.commit.sha} comparison for ${branch.name}`,
+                );
+              }
 
-              if (comparison.data.ahead_by === 0) {
+              if (comparison.ahead_by === 0) {
                 cleanupDebt.push({
                   branch: branch.name,
                   head: branch.commit.sha,
                 });
               } else {
                 core.info(
-                  `Keeping ${branch.name}: ${comparison.data.ahead_by} commit(s) are not in ${defaultBranch}`,
+                  `Keeping ${branch.name}: ${comparison.ahead_by} commit(s) are not in ${defaultBranch}`,
                 );
               }
             }
